@@ -1,4 +1,6 @@
 import os
+from flask import Flask
+import threading
 
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
@@ -252,6 +254,16 @@ async def art(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(INFO["art"], parse_mode="MarkdownV2")
 
 
+def run_web():
+    app = Flask(__name__)
+
+    @app.route("/")
+    def home():
+        return "Bot PPS UTN FRC activo"
+
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
 # -----------------------------
 # Main
 # -----------------------------
@@ -274,6 +286,8 @@ def main():
 
     # Handler para mensajes de texto
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+
+    threading.Thread(target=run_web, daemon=True).start()
     
     print("🤖 Bot en ejecución...")
     app.run_polling()
