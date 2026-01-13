@@ -24,7 +24,7 @@ DOCS_DIR.mkdir(exist_ok=True)
 F001_PDF = DOCS_DIR / "Formulario_001.pdf"
 F001_EJEMPLO_PDF = DOCS_DIR / "Ejemplo_Formulario_001.pdf"
 
-TOKEN = os.getenv("BOT_TOKEN", "8577379320:AAGKartm8vQGDqNHGGx4O3rpxSgXQfFAnZM")
+TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_MODE = True  # Cambia a False para usar polling + keep-alive
 
 # =================== KEEP ALIVE SERVICE ===================
