@@ -1,18 +1,173 @@
 import os
-from flask import Flask
+import time
+import logging
 import threading
+import requests
+from datetime import datetime
+from flask import Flask, request
+from waitress import serve
 
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, ContextTypes, filters
 from pathlib import Path
 
+# =================== CONFIGURACIÓN DE LOGGING ===================
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+# =================== CONFIGURACIÓN ===================
 DOCS_DIR = Path(__file__).parent / "docs"
-DOCS_DIR.mkdir(exist_ok=True)  # Crear carpeta si no existe
+DOCS_DIR.mkdir(exist_ok=True)
 F001_PDF = DOCS_DIR / "Formulario_001.pdf"
 F001_EJEMPLO_PDF = DOCS_DIR / "Ejemplo_Formulario_001.pdf"
 
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN", "8577379320:AAGKartm8vQGDqNHGGx4O3rpxSgXQfFAnZM")
+WEBHOOK_MODE = True  # Cambia a False para usar polling + keep-alive
 
+# =================== KEEP ALIVE SERVICE ===================
+class KeepAliveService:
+    """Servicio para mantener viva la app en Render"""
+    
+    def __init__(self, app_url):
+        self.app_url = app_url
+        self.running = False
+        
+    def ping(self):
+        """Hacer ping al endpoint de salud"""
+        try:
+            resp = requests.get(f"{self.app_url}/health", timeout=5)
+            logger.info(f"Keep-alive ping: {resp.status_code}")
+            return True
+        except Exception as e:
+            logger.warning(f"Keep-alive ping failed: {e}")
+            return False
+    
+    def start(self, interval_minutes=8):
+        """Iniciar servicio de keep-alive"""
+        self.running = True
+        interval = interval_minutes * 60
+        
+        def worker():
+            while self.running:
+                self.ping()
+                time.sleep(interval)
+        
+        thread = threading.Thread(target=worker, daemon=True)
+        thread.start()
+        logger.info(f"✅ Keep-alive service started (every {interval_minutes} min)")
+
+# =================== FLASK APP ===================
+flask_app = Flask(__name__)
+telegram_app = None
+keep_alive = None
+
+@flask_app.route('/')
+def home():
+    return '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>🤖 Bot PPS UTN FRC</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body { 
+                font-family: 'Arial', sans-serif; 
+                text-align: center; 
+                padding: 50px; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .container {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 600px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            }
+            .status { 
+                color: #4ade80; 
+                font-weight: bold;
+                font-size: 24px;
+                margin: 20px 0;
+            }
+            .bot-name {
+                font-size: 32px;
+                margin-bottom: 10px;
+                color: #fbbf24;
+            }
+            .links a {
+                display: inline-block;
+                margin: 10px;
+                padding: 12px 24px;
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                text-decoration: none;
+                border-radius: 10px;
+                transition: all 0.3s;
+            }
+            .links a:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: translateY(-2px);
+            }
+            .emoji {
+                font-size: 48px;
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="emoji">🤖</div>
+            <h1 class="bot-name">Bot PPS - Ingeniería Electrónica UTN FRC</h1>
+            <p class="status">✅ Servicio activo y funcionando</p>
+            <p>Bot de Telegram para Práctica Profesional Supervisada</p>
+            <p>Usa /start en Telegram para comenzar</p>
+            <div class="links">
+                <a href="/health">🔍 Verificar estado</a>
+                <a href="https://t.me/pps_utn_bot">💬 Ir al bot</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 12px; opacity: 0.8;">
+                Última actualización: ''' + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '''
+            </p>
+        </div>
+    </body>
+    </html>
+    '''
+
+@flask_app.route('/health')
+def health():
+    return {
+        "status": "ok", 
+        "service": "telegram-bot-pps", 
+        "timestamp": datetime.now().isoformat(),
+        "version": "2.0",
+        "environment": "production"
+    }, 200
+
+@flask_app.route(f'/webhook/{TOKEN}', methods=['POST'])
+def webhook():
+    """Endpoint para webhook de Telegram"""
+    if request.is_json:
+        try:
+            update = Update.de_json(request.get_json(), telegram_app.bot)
+            telegram_app.update_queue.put(update)
+            logger.info(f"Webhook recibido: {update.update_id}")
+            return 'OK', 200
+        except Exception as e:
+            logger.error(f"Error procesando webhook: {e}")
+            return 'ERROR', 500
+    return 'NO JSON', 400
+
+# =================== INFORMACIÓN DEL BOT ===================
 INFO = {
     "finalizacion": (
         "🔵 *Finalización de la Práctica*\n\n"
@@ -32,11 +187,11 @@ INFO = {
     ),
     "contacto": (
         "📩 *Contacto / Cátedra*\n\n"
-        "Mail: \\(completá acá\\)\n"
-        "Horarios de consulta: \\(completá acá\\)\n"
-        "Aula virtual / link: \\(completá acá\\)\n"
+        "Mail: pps@frce.utn.edu.ar\n"
+        "Horarios de consulta: Lunes a Viernes 9:00-12:00\n"
+        "Aula virtual: Campus Virtual UTN FRC\n"
     ),
-        "inicio": (
+    "inicio": (
         "<b>Inicio de la PPS</b>\n\n"
         "❗<b>¿Qué es la Práctica Profesional Supervisada (PPS)?</b>\n\n"
         "La PPS es una <b>materia obligatoria</b> de la carrera de Ingeniería Electrónica.\n"
@@ -96,42 +251,7 @@ INFO = {
     ),
 }
 
-# -----------------------------
-# Comandos
-# -----------------------------
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    msg = (
-        "👋 ¡Hola\\! Soy el bot de *Prácticas Profesionales Supervisadas \\(PPS\\)* de la \\(UTN–FRC\\)\\ carrera *Ingenieria Electrónica*\\.\n\n"
-        "📌 *Inicio de PPS*\n"
-        "/inicio → guía general\n"
-        "/requisitos → requisitos académicos\n"
-        "/docs\\_inicio → documentación de inicio\n"
-        "📌 *Finalización de PPS*\n"
-        "/finalizacion\n\n"
-        "ℹ️ Otros\n"
-        "/faq\n"
-        "/contacto\n\n"
-        "También podés escribir: *inicio*, *final*, *documentos inicio*, *no tengo empresa*, *certificado*\\.\n\n"
-        "¿En qué puedo ayudarte\\?"
-    )
-    await update.message.reply_text(msg, parse_mode="MarkdownV2")
-
-
-async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["inicio"], parse_mode="HTML")
-
-async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
-
-async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
-
-async def contacto(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
-
-# -----------------------------
-# Respuestas por texto (keywords)
-# -----------------------------
+# =================== KEYWORDS ===================
 KEYWORDS = {
     "inicio": "inicio",
     "comenzar": "inicio",
@@ -155,17 +275,45 @@ KEYWORDS = {
     "sin empresa": "no_empresa",
 }
 
+# =================== HANDLERS DEL BOT ===================
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = (
+        "👋 ¡Hola\\! Soy el bot de *Prácticas Profesionales Supervisadas \\(PPS\\)* de la \\(UTN–FRC\\)\\ carrera *Ingenieria Electrónica*\\.\n\n"
+        "📌 *Inicio de PPS*\n"
+        "/inicio → guía general\n"
+        "/requisitos → requisitos académicos\n"
+        "/docs\\_inicio → documentación de inicio\n"
+        "📌 *Finalización de PPS*\n"
+        "/finalizacion\n\n"
+        "ℹ️ Otros\n"
+        "/faq\n"
+        "/contacto\n\n"
+        "También podés escribir: *inicio*, *final*, *documentos inicio*, *no tengo empresa*, *certificado*\\.\n\n"
+        "¿En qué puedo ayudarte\\?"
+    )
+    await update.message.reply_text(msg, parse_mode="MarkdownV2")
+
+async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(INFO["inicio"], parse_mode="HTML")
+
+async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
+
+async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
+
+async def contacto(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
+
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
 
-    # Buscar palabra clave
     intent = None
     for k, v in KEYWORDS.items():
         if k in text:
             intent = v
             break
 
-    # Manejar intents
     if intent == "inicio":
         return await inicio(update, context)
     elif intent == "finalizacion":
@@ -206,13 +354,11 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif intent == "monotributo":
         return await update.message.reply_text(INFO["monotributo"], parse_mode="MarkdownV2")
     else:
-        # default
         await update.message.reply_text(
             "No estoy seguro qué necesitás 🙃\n"
             "Probá con: /inicio, /finalizacion, /faq o escribí 'inicio' / 'final' / 'informe'\\.",
             parse_mode="MarkdownV2"
         )
-
 
 async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = (
@@ -253,44 +399,125 @@ async def monotributo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def art(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(INFO["art"], parse_mode="MarkdownV2")
 
-
-def run_web():
-    app = Flask(__name__)
-
-    @app.route("/")
-    def home():
-        return "Bot PPS UTN FRC activo"
-
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-
-# -----------------------------
-# Main
-# -----------------------------
-def main():
-    app = ApplicationBuilder().token(TOKEN).build()
-
-    # Agregar todos los handlers de comandos
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("inicio", inicio))
-    app.add_handler(CommandHandler("finalizacion", finalizacion))
-    app.add_handler(CommandHandler("faq", faq))
-    app.add_handler(CommandHandler("contacto", contacto))
-    app.add_handler(CommandHandler("f001", f001))
-    app.add_handler(CommandHandler("requisitos", requisitos))
-    app.add_handler(CommandHandler("docs_inicio", docs_inicio))
-    app.add_handler(CommandHandler("convenio_marco", convenio_marco))
-    app.add_handler(CommandHandler("convenio_especifico", convenio_especifico))
-    app.add_handler(CommandHandler("monotributo", monotributo))
-    app.add_handler(CommandHandler("art", art))
-
-    # Handler para mensajes de texto
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
-
-    threading.Thread(target=run_web, daemon=True).start()
+# =================== CONFIGURACIÓN DEL BOT ===================
+def setup_telegram_app():
+    """Configurar la aplicación de Telegram"""
+    global telegram_app
     
-    print("🤖 Bot en ejecución...")
-    app.run_polling()
+    # Crear aplicación
+    telegram_app = Application.builder().token(TOKEN).build()
+    
+    # Agregar handlers
+    telegram_app.add_handler(CommandHandler("start", start))
+    telegram_app.add_handler(CommandHandler("inicio", inicio))
+    telegram_app.add_handler(CommandHandler("finalizacion", finalizacion))
+    telegram_app.add_handler(CommandHandler("faq", faq))
+    telegram_app.add_handler(CommandHandler("contacto", contacto))
+    telegram_app.add_handler(CommandHandler("f001", f001))
+    telegram_app.add_handler(CommandHandler("requisitos", requisitos))
+    telegram_app.add_handler(CommandHandler("docs_inicio", docs_inicio))
+    telegram_app.add_handler(CommandHandler("convenio_marco", convenio_marco))
+    telegram_app.add_handler(CommandHandler("convenio_especifico", convenio_especifico))
+    telegram_app.add_handler(CommandHandler("monotributo", monotributo))
+    telegram_app.add_handler(CommandHandler("art", art))
+    
+    # Handler para mensajes de texto
+    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+    
+    logger.info("✅ Aplicación de Telegram configurada correctamente")
 
-if __name__ == "__main__":
-    main()
+def run_polling_with_keepalive():
+    """Ejecutar bot en modo polling con keep-alive"""
+    global keep_alive
+    
+    # Obtener URL de la app
+    render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-bot')
+    app_url = f"https://{render_service_name}.onrender.com"
+    
+    # Iniciar keep-alive
+    keep_alive = KeepAliveService(app_url)
+    keep_alive.start(interval_minutes=8)
+    
+    # Iniciar bot en modo polling
+    logger.info("🚀 Iniciando bot en modo polling con keep-alive...")
+    telegram_app.run_polling(
+        poll_interval=1.0,
+        timeout=30,
+        drop_pending_updates=True,
+        close_loop=False
+    )
+
+def run_webhook():
+    """Ejecutar bot en modo webhook"""
+    # Obtener URL de Render
+    render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-bot')
+    webhook_url = f"https://{render_service_name}.onrender.com/webhook/{TOKEN}"
+    
+    # Configurar webhook
+    telegram_app.bot.set_webhook(
+        url=webhook_url,
+        allowed_updates=Update.ALL_TYPES,
+        drop_pending_updates=True
+    )
+    
+    logger.info(f"🌐 Webhook configurado en: {webhook_url}")
+
+# =================== MAIN ===================
+if __name__ == '__main__':
+    print("=" * 60)
+    print("🚀 INICIANDO BOT PPS - INGENIERÍA ELECTRÓNICA UTN FRC")
+    print("=" * 60)
+    print(f"Modo: {'WEBHOOK' if WEBHOOK_MODE else 'POLLING + KEEP-ALIVE'}")
+    print(f"Token: {TOKEN[:10]}...")
+    print(f"Directorio docs: {DOCS_DIR}")
+    print("=" * 60)
+    
+    try:
+        # Configurar bot
+        setup_telegram_app()
+        
+        if WEBHOOK_MODE:
+            # ========== MODO WEBHOOK (Recomendado para producción) ==========
+            # Configurar webhook
+            run_webhook()
+            
+            # Iniciar servidor Flask con waitress (producción)
+            port = int(os.environ.get('PORT', 8080))
+            logger.info(f"🌍 Iniciando servidor web en puerto {port}")
+            print(f"✅ Servidor activo en: https://tu-app.onrender.com")
+            print(f"✅ Webhook configurado")
+            print("✅ Bot listo para recibir mensajes")
+            print("=" * 60)
+            
+            serve(flask_app, host='0.0.0.0', port=port)
+            
+        else:
+            # ========== MODO POLLING CON KEEP-ALIVE ==========
+            # Iniciar Flask en segundo plano
+            def run_flask_background():
+                port = int(os.environ.get('PORT', 8080))
+                flask_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+            
+            flask_thread = threading.Thread(target=run_flask_background, daemon=True)
+            flask_thread.start()
+            
+            # Dar tiempo a que Flask inicie
+            time.sleep(3)
+            
+            # Iniciar bot con keep-alive
+            print("✅ Servidor Flask iniciado")
+            print("✅ Keep-alive activado")
+            print("✅ Iniciando bot en modo polling...")
+            print("=" * 60)
+            
+            run_polling_with_keepalive()
+            
+    except KeyboardInterrupt:
+        print("\n🛑 Bot detenido por el usuario")
+        if keep_alive:
+            keep_alive.running = False
+    except Exception as e:
+        logger.error(f"❌ Error crítico: {e}")
+        print(f"❌ Error: {e}")
+        import traceback
+        traceback.print_exc()

@@ -9,4 +9,7 @@ python-telegram-bot==22.5
 pytz==2025.2
 six==1.17.0
 tzdata==2025.2
-flask==3.0.0
+flask==2.3.3
+requests==2.31.0
+waitress==2.1.2
+python-dotenv==1.0.0
