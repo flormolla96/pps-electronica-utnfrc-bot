@@ -202,7 +202,7 @@ INFO = {
         "vincularse con el ámbito laboral y desarrollar un <b>proyecto técnico</b>.\n\n"
         "La PPS puede realizarse en una <b>empresa como en un centro de investigación</b>.\n"
         "Puede desarrollarse en un lugar donde el/la estudiante ya se encuentre trabajando, "
-        ya sea en relación de dependencia, como pasante o investigador.\n\n"
+        "ya sea en relación de dependencia, como pasante o investigador.\n\n"
         "En todos los casos, debe presentarse un <b>proyecto innovador</b> vinculado a la Ingeniería Electrónica, "
         "con una carga horaria total de <b>200 horas</b>.\n\n"
         "Para comenzar, es necesario cumplir con los requisitos académicos y presentar la documentación correspondiente.\n\n"
