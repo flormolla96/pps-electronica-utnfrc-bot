@@ -3,6 +3,7 @@ import time
 import logging
 import threading
 import requests
+import asyncio
 from datetime import datetime
 from flask import Flask, request
 from waitress import serve
@@ -25,7 +26,7 @@ F001_PDF = DOCS_DIR / "Formulario_001.pdf"
 F001_EJEMPLO_PDF = DOCS_DIR / "Ejemplo_Formulario_001.pdf"
 
 TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_MODE = True  # Cambia a False para usar polling + keep-alive
+WEBHOOK_MODE = False  # Cambia a False para usar polling temporalmente, luego a True
 
 # =================== KEEP ALIVE SERVICE ===================
 class KeepAliveService:
@@ -133,7 +134,7 @@ def home():
             <p>Usa /start en Telegram para comenzar</p>
             <div class="links">
                 <a href="/health">🔍 Verificar estado</a>
-                <a href="https://t.me/pps_utn_bot">💬 Ir al bot</a>
+                <a href="https://t.me/PPS_Electronica_UTN_Bot">💬 Ir al bot</a>
             </div>
             <p style="margin-top: 30px; font-size: 12px; opacity: 0.8;">
                 Última actualización: ''' + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '''
@@ -153,7 +154,7 @@ def health():
         "environment": "production"
     }, 200
 
-@flask_app.route(f'/webhook/{TOKEN}', methods=['POST'])
+@flask_app.route(f'/webhook', methods=['POST'])
 def webhook():
     """Endpoint para webhook de Telegram"""
     if request.is_json:
@@ -201,7 +202,7 @@ INFO = {
         "vincularse con el ámbito laboral y desarrollar un <b>proyecto técnico</b>.\n\n"
         "La PPS puede realizarse en una <b>empresa como en un centro de investigación</b>.\n"
         "Puede desarrollarse en un lugar donde el/la estudiante ya se encuentre trabajando, "
-        "ya sea en relación de dependencia, como pasante o investigador.\n\n"
+        ya sea en relación de dependencia, como pasante o investigador.\n\n"
         "En todos los casos, debe presentarse un <b>proyecto innovador</b> vinculado a la Ingeniería Electrónica, "
         "con una carga horaria total de <b>200 horas</b>.\n\n"
         "Para comenzar, es necesario cumplir con los requisitos académicos y presentar la documentación correspondiente.\n\n"
@@ -426,12 +427,32 @@ def setup_telegram_app():
     
     logger.info("✅ Aplicación de Telegram configurada correctamente")
 
+async def setup_webhook():
+    """Configurar webhook de forma asíncrona"""
+    try:
+        # Obtener URL de Render
+        render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-electronica-utnfrc-bot')
+        webhook_url = f"https://{render_service_name}.onrender.com/webhook"
+        
+        # Configurar webhook
+        await telegram_app.bot.set_webhook(
+            url=webhook_url,
+            allowed_updates=Update.ALL_TYPES,
+            drop_pending_updates=True
+        )
+        
+        logger.info(f"🌐 Webhook configurado en: {webhook_url}")
+        return True
+    except Exception as e:
+        logger.error(f"❌ Error configurando webhook: {e}")
+        return False
+
 def run_polling_with_keepalive():
     """Ejecutar bot en modo polling con keep-alive"""
     global keep_alive
     
     # Obtener URL de la app
-    render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-bot')
+    render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-electronica-utnfrc-bot')
     app_url = f"https://{render_service_name}.onrender.com"
     
     # Iniciar keep-alive
@@ -440,30 +461,26 @@ def run_polling_with_keepalive():
     
     # Iniciar bot en modo polling
     logger.info("🚀 Iniciando bot en modo polling con keep-alive...")
-    telegram_app.run_polling(
-        poll_interval=1.0,
-        timeout=30,
-        drop_pending_updates=True,
-        close_loop=False
-    )
+    
+    # Usar asyncio para ejecutar el polling
+    try:
+        telegram_app.run_polling(
+            poll_interval=1.0,
+            timeout=30,
+            drop_pending_updates=True,
+            close_loop=False
+        )
+    except Exception as e:
+        logger.error(f"❌ Error en polling: {e}")
 
-def run_webhook():
-    """Ejecutar bot en modo webhook"""
-    # Obtener URL de Render
-    render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-bot')
-    webhook_url = f"https://{render_service_name}.onrender.com/webhook/{TOKEN}"
-    
-    # Configurar webhook
-    telegram_app.bot.set_webhook(
-        url=webhook_url,
-        allowed_updates=Update.ALL_TYPES,
-        drop_pending_updates=True
-    )
-    
-    logger.info(f"🌐 Webhook configurado en: {webhook_url}")
+def run_flask_server():
+    """Ejecutar servidor Flask"""
+    port = int(os.environ.get('PORT', 10000))
+    logger.info(f"🌍 Iniciando servidor Flask en puerto {port}")
+    flask_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
 
 # =================== MAIN ===================
-if __name__ == '__main__':
+def main():
     print("=" * 60)
     print("🚀 INICIANDO BOT PPS - INGENIERÍA ELECTRÓNICA UTN FRC")
     print("=" * 60)
@@ -472,46 +489,71 @@ if __name__ == '__main__':
     print(f"Directorio docs: {DOCS_DIR}")
     print("=" * 60)
     
-    try:
-        # Configurar bot
-        setup_telegram_app()
-        
-        if WEBHOOK_MODE:
-            # ========== MODO WEBHOOK (Recomendado para producción) ==========
-            # Configurar webhook
-            run_webhook()
+    # Configurar bot
+    setup_telegram_app()
+    
+    if WEBHOOK_MODE:
+        # ========== MODO WEBHOOK ==========
+        try:
+            # Ejecutar setup webhook de forma síncrona
+            import asyncio
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(setup_webhook())
+            loop.close()
             
-            # Iniciar servidor Flask con waitress (producción)
-            port = int(os.environ.get('PORT', 8080))
-            logger.info(f"🌍 Iniciando servidor web en puerto {port}")
-            print(f"✅ Servidor activo en: https://tu-app.onrender.com")
-            print(f"✅ Webhook configurado")
+            # Iniciar servidor Flask con waitress
+            port = int(os.environ.get('PORT', 10000))
+            logger.info(f"🌍 Servidor web en puerto {port}")
+            print(f"✅ Webhook configurado: https://pps-electronica-utnfrc-bot.onrender.com/webhook")
             print("✅ Bot listo para recibir mensajes")
             print("=" * 60)
             
             serve(flask_app, host='0.0.0.0', port=port)
             
-        else:
-            # ========== MODO POLLING CON KEEP-ALIVE ==========
+        except Exception as e:
+            logger.error(f"❌ Error en modo webhook: {e}")
+            print(f"❌ Falló webhook, cambiando a polling...")
+            WEBHOOK_MODE = False
+    
+    if not WEBHOOK_MODE:
+        # ========== MODO POLLING CON KEEP-ALIVE ==========
+        try:
             # Iniciar Flask en segundo plano
-            def run_flask_background():
-                port = int(os.environ.get('PORT', 8080))
-                flask_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
-            
-            flask_thread = threading.Thread(target=run_flask_background, daemon=True)
+            flask_thread = threading.Thread(target=run_flask_server, daemon=True)
             flask_thread.start()
             
             # Dar tiempo a que Flask inicie
             time.sleep(3)
             
-            # Iniciar bot con keep-alive
+            # Iniciar keep-alive
+            render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-electronica-utnfrc-bot')
+            app_url = f"https://{render_service_name}.onrender.com"
+            keep_alive = KeepAliveService(app_url)
+            keep_alive.start(interval_minutes=8)
+            
             print("✅ Servidor Flask iniciado")
             print("✅ Keep-alive activado")
             print("✅ Iniciando bot en modo polling...")
             print("=" * 60)
             
-            run_polling_with_keepalive()
+            # Iniciar bot en modo polling
+            telegram_app.run_polling(
+                poll_interval=1.0,
+                timeout=30,
+                drop_pending_updates=True,
+                close_loop=False
+            )
             
+        except Exception as e:
+            logger.error(f"❌ Error en modo polling: {e}")
+            print(f"❌ Error: {e}")
+            import traceback
+            traceback.print_exc()
+
+if __name__ == '__main__':
+    try:
+        main()
     except KeyboardInterrupt:
         print("\n🛑 Bot detenido por el usuario")
         if keep_alive:
