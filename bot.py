@@ -154,13 +154,16 @@ def health():
         "environment": "production"
     }, 200
 
-@flask_app.route(f'/webhook', methods=['POST'])
+@flask_app.route('/webhook', methods=['POST'])
 def webhook():
     """Endpoint para webhook de Telegram"""
     if request.is_json:
         try:
             update = Update.de_json(request.get_json(), telegram_app.bot)
-            telegram_app.update_queue.put(update)
+            asyncio.run_coroutine_threadsafe(
+                telegram_app.process_update(update),
+                telegram_app._get_running_loop() or asyncio.new_event_loop()
+            )
             logger.info(f"Webhook recibido: {update.update_id}")
             return 'OK', 200
         except Exception as e:
@@ -327,16 +330,28 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await monotributo(update, context)
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["inicio"], parse_mode="HTML")
+    if update.message:
+        await update.message.reply_text(INFO["inicio"], parse_mode="HTML")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["inicio"], parse_mode="HTML")
 
 async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["finalizacion"], parse_mode="MarkdownV2")
 
 async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["faq"], parse_mode="MarkdownV2")
 
 async def contacto(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["contacto"], parse_mode="MarkdownV2")
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
@@ -402,35 +417,59 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "2\\) un ejemplo completo\n\n"
         "Luego escribime *'preguntas f001'* para ver dudas típicas\\."
     )
-    await update.message.reply_text(texto, parse_mode="MarkdownV2")
+    
+    if update.message:
+        await update.message.reply_text(texto, parse_mode="MarkdownV2")
+        user_message = update.message
+    elif update.callback_query:
+        await update.callback_query.message.reply_text(texto, parse_mode="MarkdownV2")
+        user_message = update.callback_query.message
 
     if F001_PDF.exists():
-        await update.message.reply_document(document=open(F001_PDF, "rb"), filename=F001_PDF.name)
+        await user_message.reply_document(document=open(F001_PDF, "rb"), filename=F001_PDF.name)
     else:
-        await update.message.reply_text("⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs\\.")
+        await user_message.reply_text("⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs\\.")
 
     if F001_EJEMPLO_PDF.exists():
-        await update.message.reply_document(document=open(F001_EJEMPLO_PDF, "rb"), filename=F001_EJEMPLO_PDF.name)
+        await user_message.reply_document(document=open(F001_EJEMPLO_PDF, "rb"), filename=F001_EJEMPLO_PDF.name)
     else:
-        await update.message.reply_text("⚠️ No encuentro el PDF de ejemplo del Formulario 001 en la carpeta /docs\\.")
+        await user_message.reply_text("⚠️ No encuentro el PDF de ejemplo del Formulario 001 en la carpeta /docs\\.")
 
 async def requisitos(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["requisitos"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["requisitos"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["requisitos"], parse_mode="MarkdownV2")
 
 async def docs_inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["docs_inicio"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["docs_inicio"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["docs_inicio"], parse_mode="MarkdownV2")
 
 async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
 
 async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
 
 async def monotributo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["monotributo"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["monotributo"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["monotributo"], parse_mode="MarkdownV2")
 
 async def art(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(INFO["art"], parse_mode="MarkdownV2")
+    if update.message:
+        await update.message.reply_text(INFO["art"], parse_mode="MarkdownV2")
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(INFO["art"], parse_mode="MarkdownV2")
 
 # =================== CONFIGURACIÓN DEL BOT ===================
 def setup_telegram_app():
@@ -453,6 +492,9 @@ def setup_telegram_app():
     telegram_app.add_handler(CommandHandler("convenio_especifico", convenio_especifico))
     telegram_app.add_handler(CommandHandler("monotributo", monotributo))
     telegram_app.add_handler(CommandHandler("art", art))
+    
+    # Handler para callback queries (botones)
+    telegram_app.add_handler(CallbackQueryHandler(manejar_botones))
     
     # Handler para mensajes de texto
     telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
@@ -495,7 +537,7 @@ def run_flask_server():
     """Ejecutar servidor Flask"""
     port = int(os.environ.get('PORT', 10000))
     logger.info(f"🌍 Iniciando servidor Flask en puerto {port}")
-    flask_app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
+    serve(flask_app, host='0.0.0.0', port=port, threads=4)
 
 def run_polling_mode():
     """Ejecutar en modo polling"""
@@ -510,17 +552,24 @@ def run_polling_mode():
         keep_alive = KeepAliveService(app_url)
         keep_alive.start(interval_minutes=8)
         
+        # Iniciar Flask en segundo plano
+        flask_thread = threading.Thread(target=run_flask_server, daemon=True)
+        flask_thread.start()
+        
         print("✅ Servidor Flask iniciado")
         print("✅ Keep-alive activado")
         print("✅ Iniciando bot en modo polling...")
         print("=" * 60)
+        
+        # Dar tiempo a que Flask inicie
+        time.sleep(2)
         
         # Iniciar bot en modo polling
         telegram_app.run_polling(
             poll_interval=1.0,
             timeout=30,
             drop_pending_updates=True,
-            close_loop=False
+            allowed_updates=Update.ALL_TYPES
         )
         
     except Exception as e:
@@ -542,7 +591,7 @@ def run_webhook_mode():
         print("✅ Bot listo para recibir mensajes")
         print("=" * 60)
         
-        serve(flask_app, host='0.0.0.0', port=port)
+        serve(flask_app, host='0.0.0.0', port=port, threads=4)
         return True
         
     except Exception as e:
@@ -575,13 +624,6 @@ def main():
     if not use_webhook:
         print("🔄 Iniciando en modo polling...")
         try:
-            # Iniciar Flask en segundo plano
-            flask_thread = threading.Thread(target=run_flask_server, daemon=True)
-            flask_thread.start()
-            
-            # Dar tiempo a que Flask inicie
-            time.sleep(3)
-            
             # Ejecutar modo polling
             run_polling_mode()
             
