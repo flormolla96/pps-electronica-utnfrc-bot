@@ -196,18 +196,18 @@ INFO = {
         "Aula virtual: Campus Virtual UTN FRC\n"
     ),
     "inicio": (
-        f"{['company']} <b>INICIO DE PPS</b>\n\n"
-        f"{['question']} <b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
-        f"{['check']} Es una <b>materia obligatoria</b> de la carrera\n"
-        f"{['check']} Se evalúa con condición <b>aprobado</b>\n"
-        f"{['check']} <b>200 horas</b> de duración\n"
-        f"{['check']} Proyecto innovador en empresa o centro de investigación\n\n"
-        f"{['warning']} <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
-        f"{['next']} <b>Pasos para iniciar:</b>\n"
+        f"🏭 <b>INICIO DE PPS</b>\n\n"
+        f"<b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
+        f"✔️ Es una <b>materia obligatoria</b> de la carrera\n"
+        f"✔️ Se evalúa con condición <b>aprobado</b>\n"
+        f"✔️ <b>200 horas</b> de duración\n"
+        f"✔️ Proyecto innovador en empresa o centro de investigación\n\n"
+        f"❗​ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
+        f"<b>Pasos para iniciar:</b>\n"
         "1. Verificar requisitos académicos ✅\n"
         "2. Buscar empresa/institución 🏢\n"
         "3. Completar documentación inicial 📄\n"
-        "4. Enviar documentación 📄\n"
+        "4. Dejar documentacion en Departamento de Electrónica 📄\n"
         "5. Esperar aprobación ⌛\n"
         "6. Iniciar prácticas 🚀\n\n"
         "👇 <b>Selecciona una opción:</b>"
@@ -292,9 +292,9 @@ def teclado_menu_principal():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 ¡Hola Soy el bot de <b>Prácticas Profesionales Supervisadas</b> de la carrera\n"
-        "Ingeniería Electrónica – UTN FRC\n\n"
-        "Seleccioná una opción:",
+        "👋 ¡Hola Soy el bot de <b>Prácticas Profesionales Supervisadas</b>\n"
+        "de la carrera <b>Ingeniería Electrónica – UTN FRC</b>\n\n"
+        "⬇️​ Seleccioná una opción:",
         parse_mode="HTML",
         reply_markup=teclado_menu_principal()
     )
