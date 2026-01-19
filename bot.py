@@ -277,22 +277,54 @@ KEYWORDS = {
 }
 
 # =================== HANDLERS DEL BOT ===================
+def teclado_menu_principal():
+    keyboard = [
+        [InlineKeyboardButton("Inicio de la PPS", callback_data="menu_inicio")],
+        [InlineKeyboardButton("Finalización de la PPS", callback_data="menu_finalizacion")],
+        [InlineKeyboardButton("Preguntas frecuentes", callback_data="menu_faq")],
+        [InlineKeyboardButton("Contacto", callback_data="menu_contacto")],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    msg = (
-        "👋 ¡Hola\\! Soy el bot de *Prácticas Profesionales Supervisadas \\(PPS\\)* de la \\(UTN–FRC\\)\\ carrera *Ingenieria Electrónica*\\.\n\n"
-        "📌 *Inicio de PPS*\n"
-        "/inicio → guía general\n"
-        "/requisitos → requisitos académicos\n"
-        "/docs\\_inicio → documentación de inicio\n"
-        "📌 *Finalización de PPS*\n"
-        "/finalizacion\n\n"
-        "ℹ️ Otros\n"
-        "/faq\n"
-        "/contacto\n\n"
-        "También podés escribir: *inicio*, *final*, *documentos inicio*, *no tengo empresa*, *certificado*\\.\n\n"
-        "¿En qué puedo ayudarte\\?"
+    await update.message.reply_text(
+        "👋 ¡Hola Soy el bot de <b>Prácticas Profesionales Supervisadas</b> de la carrera\n"
+        "Ingeniería Electrónica – UTN FRC\n\n"
+        "Seleccioná una opción:",
+        parse_mode="HTML",
+        reply_markup=teclado_menu_principal()
     )
-    await update.message.reply_text(msg, parse_mode="MarkdownV2")
+
+async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    data = query.data
+
+    if data == "menu_inicio":
+        await query.message.reply_text(INFO["inicio"], parse_mode="HTML")
+
+    elif data == "menu_finalizacion":
+        await query.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
+
+    elif data == "menu_faq":
+        await query.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
+
+    elif data == "menu_contacto":
+        await query.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
+
+    # botones de documentos (los que ya tenías)
+    elif data == "f001":
+        await f001(update, context)
+    elif data == "convenio_marco":
+        await convenio_marco(update, context)
+    elif data == "convenio_especifico":
+        await convenio_especifico(update, context)
+    elif data == "art":
+        await art(update, context)
+    elif data == "monotributo":
+        await monotributo(update, context)
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(INFO["inicio"], parse_mode="HTML")
