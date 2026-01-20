@@ -198,10 +198,10 @@ INFO = {
     "inicio": (
         f"🏭 <b>INICIO DE PPS</b>\n\n"
         f"<b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
-        f"✔️ Es una <b>materia obligatoria</b> de la carrera\n"
-        f"✔️ Se evalúa con condición <b>aprobado</b>\n"
-        f"✔️ <b>200 horas</b> de duración\n"
-        f"✔️ Proyecto innovador en empresa o centro de investigación\n\n"
+        f"🔸 Es una <b>materia obligatoria</b> de la carrera\n"
+        f"🔸 Se evalúa con condición <b>aprobado</b>\n"
+        f"🔸 <b>200 horas</b> de duración\n"
+        f"🔸 Proyecto innovador en empresa o centro de investigación\n\n"
         f"❗​ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
         f"<b>Pasos para iniciar:</b>\n"
         "1. Verificar requisitos académicos ✅\n"
@@ -289,6 +289,14 @@ def teclado_menu_principal():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+def teclado_inicio_pps():
+    """Teclado para la sección Inicio de PPS"""
+    keyboard = [
+        [InlineKeyboardButton(f" Requisitos Académicos", callback_data="requisitos")],
+        [InlineKeyboardButton(f" Documentación", callback_data="docs_inicio")],
+        [InlineKeyboardButton(f" Menú Principal", callback_data="menu_principal")]
+    ]
+    return InlineKeyboardMarkup(keyboard)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -299,14 +307,39 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=teclado_menu_principal()
     )
 
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /menu para mostrar el menú principal"""
+    menu_text = INFO["menu_inicio"]
+    await update.message.reply_text(
+        menu_text,
+        parse_mode="HTML",
+        reply_markup=teclado_menu_principal()
+    )
+
 async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
     data = query.data
 
+    # MENÚ PRINCIPAL
     if data == "menu_inicio":
         await query.message.reply_text(INFO["inicio"], parse_mode="HTML")
+
+    if query.data == "menu_inicio":
+        await query.edit_message_text(
+            INFO["menu_inicio"],
+            parse_mode="HTML",
+            reply_markup=teclado_menu_principal()
+        )
+    
+    # INICIO DE PPS
+    elif query.data == "inicio_pps":
+        await query.edit_message_text(
+            INFO["inicio_pps"],
+            parse_mode="HTML",
+            reply_markup=teclado_inicio_pps()
+        )
 
     elif data == "menu_finalizacion":
         await query.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
@@ -481,6 +514,7 @@ def setup_telegram_app():
     
     # Agregar handlers
     telegram_app.add_handler(CommandHandler("start", start))
+    telegram_app.add_handler(CommandHandler("menu", menu))
     telegram_app.add_handler(CommandHandler("inicio", inicio))
     telegram_app.add_handler(CommandHandler("finalizacion", finalizacion))
     telegram_app.add_handler(CommandHandler("faq", faq))
