@@ -172,28 +172,28 @@ def webhook():
 # =================== INFORMACIÓN DEL BOT ===================
 INFO = {
     "inicio_pps": (
-        "🏭 <b>INICIO DE PPS</b>\n\n"
-        "<b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
-        "🔸 Es una <b>materia obligatoria</b> de la carrera\n"
-        "🔸 Se evalúa con condición <b>aprobado</b>\n"
-        "🔸 <b>200 horas</b> de duración\n"
+        "🏭 *INICIO DE PPS*\n\n"
+        "*¿Qué es la Práctica Profesional Supervisada?*\n\n"
+        "🔸 Es una *materia obligatoria* de la carrera\n"
+        "🔸 Se evalúa con condición *aprobado*\n"
+        "🔸 *200 horas* de duración\n"
         "🔸 Proyecto innovador en empresa o centro de investigación\n\n"
-        "❗​ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
-        "<b>Pasos para iniciar:</b>\n"
-        "1. Verificar requisitos académicos ✅\n"
-        "2. Buscar empresa/institución 🏢\n"
-        "3. Completar documentación inicial 📄\n"
-        "4. Dejar documentación en Departamento de Electrónica 📄\n"
-        "5. Esperar aprobación ⌛\n"
-        "6. Iniciar prácticas 🚀\n\n"
-        "👇 <b>Selecciona una opción:</b>"
+        "❗ *Importante:* Debe realizarse en un ámbito profesional\n\n"
+        "*Pasos para iniciar:*\n"
+        "1\\. Verificar requisitos académicos ✅\n"
+        "2\\. Buscar empresa/institución 🏢\n"
+        "3\\. Completar documentación inicial 📄\n"
+        "4\\. Dejar documentación en Departamento de Electrónica 📄\n"
+        "5\\. Esperar aprobación ⌛\n"
+        "6\\. Iniciar prácticas 🚀\n\n"
+        "👇 *Selecciona una opción:*"
     ),
     "finalizacion": (
         "🔵 *Finalización de la Práctica*\n\n"
-        "1) Verificá que cumpliste la carga horaria requerida\\.\n"
-        "2) Prepará el informe final \\(estructura y formato según cátedra\\)\\.\n"
-        "3) Pedí certificado/constancia a la empresa \\(si aplica\\)\\.\n"
-        "4) Entregá informe \\+ documentación final antes de la fecha límite\\.\n\n"
+        "1\\) Verificá que cumpliste la carga horaria requerida\\.\n"
+        "2\\) Prepará el informe final \\(estructura y formato según cátedra\\)\\.\n"
+        "3\\) Pedí certificado/constancia a la empresa \\(si aplica\\)\\.\n"
+        "4\\) Entregá informe \\+ documentación final antes de la fecha límite\\.\n\n"
         "📌 Tip: Si te falta el certificado, escribí *'certificado'*\\.\n"
         "Escribí *'informe'* para más detalles sobre el informe final\\."
     ),
@@ -206,26 +206,26 @@ INFO = {
     ),
     "contacto": (
         "📩 *Contacto / Cátedra*\n\n"
-        "Mail: pps@frce.utn.edu.ar\n"
-        "Horarios de consulta: Lunes a Viernes 9:00-12:00\n"
+        "Mail: pps@frce\\.utn\\.edu\\.ar\n"
+        "Horarios de consulta: Lunes a Viernes 9:00\\-12:00\n"
         "Aula virtual: Campus Virtual UTN FRC\n"
     ),
     "inicio": (
-        "<b>Inicio de la PPS</b>\n\n"
-        "❗<b>¿Qué es la Práctica Profesional Supervisada (PPS)?</b>\n\n"
-        "La PPS es una <b>materia obligatoria</b> de la carrera de Ingeniería Electrónica.\n"
-        "Todos los estudiantes deben realizarla y se evalúa con condición <b>aprobado</b>.\n\n"
-        "Su objetivo es que el/la estudiante pueda <b>aplicar los conocimientos adquiridos</b> "
-        "en la carrera en un <b>entorno profesional real</b>, adquirir experiencia, "
-        "vincularse con el ámbito laboral y desarrollar un <b>proyecto técnico</b>.\n\n"
-        "La PPS puede realizarse en una <b>empresa como en un centro de investigación</b>.\n"
+        "*Inicio de la PPS*\n\n"
+        "❗*¿Qué es la Práctica Profesional Supervisada \\(PPS\\)?*\n\n"
+        "La PPS es una *materia obligatoria* de la carrera de Ingeniería Electrónica\\.\n"
+        "Todos los estudiantes deben realizarla y se evalúa con condición *aprobado*\\.\n\n"
+        "Su objetivo es que el/la estudiante pueda *aplicar los conocimientos adquiridos* "
+        "en la carrera en un *entorno profesional real*, adquirir experiencia, "
+        "vincularse con el ámbito laboral y desarrollar un *proyecto técnico*\\.\n\n"
+        "La PPS puede realizarse en una *empresa como en un centro de investigación*\\.\n"
         "Puede desarrollarse en un lugar donde el/la estudiante ya se encuentre trabajando, "
-        "ya sea en relación de dependencia, como pasante o investigador.\n\n"
-        "En todos los casos, debe presentarse un <b>proyecto innovador</b> vinculado a la Ingeniería Electrónica, "
-        "con una carga horaria total de <b>200 horas</b>.\n\n"
-        "Para comenzar, es necesario cumplir con los requisitos académicos y presentar la documentación correspondiente.\n\n"
-        "✅ <b>Primero</b>: verificá requisitos académicos\n"
-        "📄 <b>Después</b>: juntá la documentación\n"
+        "ya sea en relación de dependencia, como pasante o investigador\\.\n\n"
+        "En todos los casos, debe presentarse un *proyecto innovador* vinculado a la Ingeniería Electrónica, "
+        "con una carga horaria total de *200 horas*\\.\n\n"
+        "Para comenzar, es necesario cumplir con los requisitos académicos y presentar la documentación correspondiente\\.\n\n"
+        "✅ *Primero*: verificá requisitos académicos\n"
+        "📄 *Después*: juntá la documentación\n"
     ),
     "requisitos": (
         "✅ *Requisitos académicos para iniciar la PPS*\n\n"
@@ -254,9 +254,9 @@ INFO = {
         "📘 *Convenio Específico de PPS*\n\n"
         "⚠️ Solo lo completan estudiantes que *NO* sean parte de la empresa ni pasantes\\.\n\n"
         "Si me decís tu situación:\n"
-        "1) empleado/a\n"
-        "2) pasante\n"
-        "3) externo/a\n"
+        "1\\) empleado/a\n"
+        "2\\) pasante\n"
+        "3\\) externo/a\n"
         "te confirmo si lo necesitás\\."
     ),
     "monotributo": (
@@ -315,18 +315,18 @@ def teclado_inicio_pps():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b>\n"
-        "de la carrera <b>Ingeniería Electrónica – UTN FRC</b>\n\n"
-        "⬇️​ Seleccioná una opción:",
-        parse_mode="HTML",
+        "👋 ¡Hola! Soy el bot de *Prácticas Profesionales Supervisadas*\n"
+        "de la carrera *Ingeniería Electrónica \\- UTN FRC*\n\n"
+        "⬇️ Seleccioná una opción:",
+        parse_mode="MarkdownV2",
         reply_markup=teclado_menu_principal()
     )
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📋 <b>Menú Principal</b>\n\n"
+        "📋 *Menú Principal*\n\n"
         "Seleccioná una opción:",
-        parse_mode="HTML",
+        parse_mode="MarkdownV2",
         reply_markup=teclado_menu_principal()
     )
 
@@ -340,8 +340,8 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # MENÚ PRINCIPAL
     if data == "menu_principal":
         await query.edit_message_text(
-            "📋 <b>Menú Principal</b>\n\nSeleccioná una opción:",
-            parse_mode="HTML",
+            "📋 *Menú Principal*\n\nSeleccioná una opción:",
+            parse_mode="MarkdownV2",
             reply_markup=teclado_menu_principal()
         )
     
@@ -349,7 +349,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "menu_inicio_pps":
         await query.edit_message_text(
             INFO["inicio_pps"],
-            parse_mode="HTML",
+            parse_mode="MarkdownV2",
             reply_markup=teclado_inicio_pps()
         )
     
@@ -411,13 +411,13 @@ async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(
             INFO["inicio_pps"],
-            parse_mode="HTML",
+            parse_mode="MarkdownV2",
             reply_markup=teclado_inicio_pps()
         )
     elif update.callback_query:
         await update.callback_query.edit_message_text(
             INFO["inicio_pps"],
-            parse_mode="HTML",
+            parse_mode="MarkdownV2",
             reply_markup=teclado_inicio_pps()
         )
 
@@ -491,10 +491,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             "No estoy seguro qué necesitás 🙃\n"
             "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n"
-            "- 'inicio' para comenzar PPS\n"
-            "- 'documentos' para ver documentación\n"
-            "- 'requisitos' para ver requisitos académicos\n"
-            "- 'final' para finalización",
+            "\\- 'inicio' para comenzar PPS\n"
+            "\\- 'documentos' para ver documentación\n"
+            "\\- 'requisitos' para ver requisitos académicos\n"
+            "\\- 'final' para finalización",
             parse_mode="MarkdownV2"
         )
 
@@ -552,7 +552,6 @@ def setup_telegram_app():
     
     logger.info("✅ Aplicación de Telegram configurada correctamente")
 
-# =================== RESTANTE DEL CÓDIGO IGUAL ===================
 async def setup_webhook_async():
     try:
         render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-electronica-utnfrc-bot')
