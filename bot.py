@@ -26,18 +26,18 @@ F001_PDF = DOCS_DIR / "Formulario_001.pdf"
 F001_EJEMPLO_PDF = DOCS_DIR / "Ejemplo_Formulario_001.pdf"
 
 TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_MODE = os.getenv("WEBHOOK_MODE", "False").lower() == "true"  # Leer de variable de entorno
+if not TOKEN:
+    raise ValueError("❌ BOT_TOKEN no encontrado en variables de entorno")
+
+WEBHOOK_MODE = os.getenv("WEBHOOK_MODE", "False").lower() == "true"
 
 # =================== KEEP ALIVE SERVICE ===================
 class KeepAliveService:
-    """Servicio para mantener viva la app en Render"""
-    
     def __init__(self, app_url):
         self.app_url = app_url
         self.running = False
         
     def ping(self):
-        """Hacer ping al endpoint de salud"""
         try:
             resp = requests.get(f"{self.app_url}/health", timeout=5)
             logger.info(f"Keep-alive ping: {resp.status_code}")
@@ -47,7 +47,6 @@ class KeepAliveService:
             return False
     
     def start(self, interval_minutes=8):
-        """Iniciar servicio de keep-alive"""
         self.running = True
         interval = interval_minutes * 60
         
@@ -156,7 +155,6 @@ def health():
 
 @flask_app.route('/webhook', methods=['POST'])
 def webhook():
-    """Endpoint para webhook de Telegram"""
     if request.is_json:
         try:
             update = Update.de_json(request.get_json(), telegram_app.bot)
@@ -173,6 +171,23 @@ def webhook():
 
 # =================== INFORMACIÓN DEL BOT ===================
 INFO = {
+    "inicio_pps": (
+        "🏭 <b>INICIO DE PPS</b>\n\n"
+        "<b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
+        "🔸 Es una <b>materia obligatoria</b> de la carrera\n"
+        "🔸 Se evalúa con condición <b>aprobado</b>\n"
+        "🔸 <b>200 horas</b> de duración\n"
+        "🔸 Proyecto innovador en empresa o centro de investigación\n\n"
+        "❗​ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
+        "<b>Pasos para iniciar:</b>\n"
+        "1. Verificar requisitos académicos ✅\n"
+        "2. Buscar empresa/institución 🏢\n"
+        "3. Completar documentación inicial 📄\n"
+        "4. Dejar documentación en Departamento de Electrónica 📄\n"
+        "5. Esperar aprobación ⌛\n"
+        "6. Iniciar prácticas 🚀\n\n"
+        "👇 <b>Selecciona una opción:</b>"
+    ),
     "finalizacion": (
         "🔵 *Finalización de la Práctica*\n\n"
         "1) Verificá que cumpliste la carga horaria requerida\\.\n"
@@ -196,21 +211,21 @@ INFO = {
         "Aula virtual: Campus Virtual UTN FRC\n"
     ),
     "inicio": (
-        f"🏭 <b>INICIO DE PPS</b>\n\n"
-        f"<b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
-        f"🔸 Es una <b>materia obligatoria</b> de la carrera\n"
-        f"🔸 Se evalúa con condición <b>aprobado</b>\n"
-        f"🔸 <b>200 horas</b> de duración\n"
-        f"🔸 Proyecto innovador en empresa o centro de investigación\n\n"
-        f"❗​ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
-        f"<b>Pasos para iniciar:</b>\n"
-        "1. Verificar requisitos académicos ✅\n"
-        "2. Buscar empresa/institución 🏢\n"
-        "3. Completar documentación inicial 📄\n"
-        "4. Dejar documentacion en Departamento de Electrónica 📄\n"
-        "5. Esperar aprobación ⌛\n"
-        "6. Iniciar prácticas 🚀\n\n"
-        "👇 <b>Selecciona una opción:</b>"
+        "<b>Inicio de la PPS</b>\n\n"
+        "❗<b>¿Qué es la Práctica Profesional Supervisada (PPS)?</b>\n\n"
+        "La PPS es una <b>materia obligatoria</b> de la carrera de Ingeniería Electrónica.\n"
+        "Todos los estudiantes deben realizarla y se evalúa con condición <b>aprobado</b>.\n\n"
+        "Su objetivo es que el/la estudiante pueda <b>aplicar los conocimientos adquiridos</b> "
+        "en la carrera en un <b>entorno profesional real</b>, adquirir experiencia, "
+        "vincularse con el ámbito laboral y desarrollar un <b>proyecto técnico</b>.\n\n"
+        "La PPS puede realizarse en una <b>empresa como en un centro de investigación</b>.\n"
+        "Puede desarrollarse en un lugar donde el/la estudiante ya se encuentre trabajando, "
+        "ya sea en relación de dependencia, como pasante o investigador.\n\n"
+        "En todos los casos, debe presentarse un <b>proyecto innovador</b> vinculado a la Ingeniería Electrónica, "
+        "con una carga horaria total de <b>200 horas</b>.\n\n"
+        "Para comenzar, es necesario cumplir con los requisitos académicos y presentar la documentación correspondiente.\n\n"
+        "✅ <b>Primero</b>: verificá requisitos académicos\n"
+        "📄 <b>Después</b>: juntá la documentación\n"
     ),
     "requisitos": (
         "✅ *Requisitos académicos para iniciar la PPS*\n\n"
@@ -282,25 +297,25 @@ KEYWORDS = {
 # =================== HANDLERS DEL BOT ===================
 def teclado_menu_principal():
     keyboard = [
-        [InlineKeyboardButton("Inicio de la PPS", callback_data="menu_inicio")],
-        [InlineKeyboardButton("Finalización de la PPS", callback_data="menu_finalizacion")],
-        [InlineKeyboardButton("Preguntas frecuentes", callback_data="menu_faq")],
-        [InlineKeyboardButton("Contacto", callback_data="menu_contacto")],
+        [InlineKeyboardButton("🏭 Inicio de la PPS", callback_data="menu_inicio_pps")],
+        [InlineKeyboardButton("🎓 Finalización de la PPS", callback_data="menu_finalizacion")],
+        [InlineKeyboardButton("❓ Preguntas frecuentes", callback_data="menu_faq")],
+        [InlineKeyboardButton("📞 Contacto", callback_data="menu_contacto")],
     ]
     return InlineKeyboardMarkup(keyboard)
 
 def teclado_inicio_pps():
-    """Teclado para la sección Inicio de PPS"""
     keyboard = [
-        [InlineKeyboardButton(f" Requisitos Académicos", callback_data="requisitos")],
-        [InlineKeyboardButton(f" Documentación", callback_data="docs_inicio")],
-        [InlineKeyboardButton(f" Menú Principal", callback_data="menu_principal")]
+        [InlineKeyboardButton("✅ Requisitos Académicos", callback_data="requisitos")],
+        [InlineKeyboardButton("📄 Documentación Inicial", callback_data="docs_inicio")],
+        [InlineKeyboardButton("🏢 No tengo empresa", callback_data="no_empresa")],
+        [InlineKeyboardButton("⬅️ Menú Principal", callback_data="menu_principal")]
     ]
     return InlineKeyboardMarkup(keyboard)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 ¡Hola Soy el bot de <b>Prácticas Profesionales Supervisadas</b>\n"
+        "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b>\n"
         "de la carrera <b>Ingeniería Electrónica – UTN FRC</b>\n\n"
         "⬇️​ Seleccioná una opción:",
         parse_mode="HTML",
@@ -308,10 +323,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Comando /menu para mostrar el menú principal"""
-    menu_text = INFO["menu_inicio"]
     await update.message.reply_text(
-        menu_text,
+        "📋 <b>Menú Principal</b>\n\n"
+        "Seleccioná una opción:",
         parse_mode="HTML",
         reply_markup=teclado_menu_principal()
     )
@@ -321,52 +335,91 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     data = query.data
+    logger.info(f"Callback recibido: {data}")
 
     # MENÚ PRINCIPAL
-    if data == "menu_inicio":
-        await query.message.reply_text(INFO["inicio"], parse_mode="HTML")
-
-    if query.data == "menu_inicio":
+    if data == "menu_principal":
         await query.edit_message_text(
-            INFO["menu_inicio"],
+            "📋 <b>Menú Principal</b>\n\nSeleccioná una opción:",
             parse_mode="HTML",
             reply_markup=teclado_menu_principal()
         )
     
     # INICIO DE PPS
-    elif query.data == "inicio_pps":
+    elif data == "menu_inicio_pps":
         await query.edit_message_text(
             INFO["inicio_pps"],
             parse_mode="HTML",
             reply_markup=teclado_inicio_pps()
         )
-
+    
+    # OPCIONES DE INICIO DE PPS
+    elif data == "requisitos":
+        await query.edit_message_text(
+            INFO["requisitos"],
+            parse_mode="MarkdownV2"
+        )
+    
+    elif data == "docs_inicio":
+        await query.edit_message_text(
+            INFO["docs_inicio"],
+            parse_mode="MarkdownV2"
+        )
+    
+    elif data == "no_empresa":
+        await query.edit_message_text(
+            "🏢 *Sin empresa todavía*\n\n"
+            "1\\) Contame tu orientación/interés \\(embebidos, potencia, telecom, control, etc\\.\\)\n"
+            "2\\) ¿Tenés CV actualizado?\n"
+            "3\\) ¿Podés hacer presencial/híbrido?\n\n"
+            "Con eso te sugiero un plan para conseguir lugar y armar mails de contacto\\.",
+            parse_mode="MarkdownV2"
+        )
+    
+    # OTRAS OPCIONES DEL MENÚ PRINCIPAL
     elif data == "menu_finalizacion":
-        await query.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
-
+        await query.edit_message_text(
+            INFO["finalizacion"],
+            parse_mode="MarkdownV2"
+        )
+    
     elif data == "menu_faq":
-        await query.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
-
+        await query.edit_message_text(
+            INFO["faq"],
+            parse_mode="MarkdownV2"
+        )
+    
     elif data == "menu_contacto":
-        await query.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
-
-    # botones de documentos (los que ya tenías)
+        await query.edit_message_text(
+            INFO["contacto"],
+            parse_mode="MarkdownV2"
+        )
+    
+    # BOTONES DE DOCUMENTOS (comandos existentes)
     elif data == "f001":
-        await f001(update, context)
+        await f001(query, context)
     elif data == "convenio_marco":
-        await convenio_marco(update, context)
+        await query.edit_message_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
     elif data == "convenio_especifico":
-        await convenio_especifico(update, context)
+        await query.edit_message_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
     elif data == "art":
-        await art(update, context)
+        await query.edit_message_text(INFO["art"], parse_mode="MarkdownV2")
     elif data == "monotributo":
-        await monotributo(update, context)
+        await query.edit_message_text(INFO["monotributo"], parse_mode="MarkdownV2")
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
-        await update.message.reply_text(INFO["inicio"], parse_mode="HTML")
+        await update.message.reply_text(
+            INFO["inicio_pps"],
+            parse_mode="HTML",
+            reply_markup=teclado_inicio_pps()
+        )
     elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["inicio"], parse_mode="HTML")
+        await update.callback_query.edit_message_text(
+            INFO["inicio_pps"],
+            parse_mode="HTML",
+            reply_markup=teclado_inicio_pps()
+        )
 
 async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
@@ -437,7 +490,11 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text(
             "No estoy seguro qué necesitás 🙃\n"
-            "Probá con: /inicio, /finalizacion, /faq o escribí 'inicio' / 'final' / 'informe'\\.",
+            "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n"
+            "- 'inicio' para comenzar PPS\n"
+            "- 'documentos' para ver documentación\n"
+            "- 'requisitos' para ver requisitos académicos\n"
+            "- 'final' para finalización",
             parse_mode="MarkdownV2"
         )
 
@@ -451,12 +508,20 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Luego escribime *'preguntas f001'* para ver dudas típicas\\."
     )
     
-    if update.message:
-        await update.message.reply_text(texto, parse_mode="MarkdownV2")
+    # Determinar si es mensaje o callback query
+    if isinstance(update, Update) and update.message:
         user_message = update.message
-    elif update.callback_query:
-        await update.callback_query.message.reply_text(texto, parse_mode="MarkdownV2")
+        await user_message.reply_text(texto, parse_mode="MarkdownV2")
+    elif isinstance(update, Update) and update.callback_query:
         user_message = update.callback_query.message
+        await user_message.reply_text(texto, parse_mode="MarkdownV2")
+    else:
+        # Si es el callback query directamente
+        user_message = update.message if hasattr(update, 'message') else None
+        if user_message:
+            await user_message.reply_text(texto, parse_mode="MarkdownV2")
+        else:
+            return
 
     if F001_PDF.exists():
         await user_message.reply_document(document=open(F001_PDF, "rb"), filename=F001_PDF.name)
@@ -468,51 +533,12 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await user_message.reply_text("⚠️ No encuentro el PDF de ejemplo del Formulario 001 en la carpeta /docs\\.")
 
-async def requisitos(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(INFO["requisitos"], parse_mode="MarkdownV2")
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["requisitos"], parse_mode="MarkdownV2")
-
-async def docs_inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(INFO["docs_inicio"], parse_mode="MarkdownV2")
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["docs_inicio"], parse_mode="MarkdownV2")
-
-async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
-
-async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
-
-async def monotributo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(INFO["monotributo"], parse_mode="MarkdownV2")
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["monotributo"], parse_mode="MarkdownV2")
-
-async def art(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(INFO["art"], parse_mode="MarkdownV2")
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["art"], parse_mode="MarkdownV2")
-
 # =================== CONFIGURACIÓN DEL BOT ===================
 def setup_telegram_app():
-    """Configurar la aplicación de Telegram"""
     global telegram_app
     
-    # Crear aplicación
     telegram_app = Application.builder().token(TOKEN).build()
     
-    # Agregar handlers
     telegram_app.add_handler(CommandHandler("start", start))
     telegram_app.add_handler(CommandHandler("menu", menu))
     telegram_app.add_handler(CommandHandler("inicio", inicio))
@@ -520,29 +546,18 @@ def setup_telegram_app():
     telegram_app.add_handler(CommandHandler("faq", faq))
     telegram_app.add_handler(CommandHandler("contacto", contacto))
     telegram_app.add_handler(CommandHandler("f001", f001))
-    telegram_app.add_handler(CommandHandler("requisitos", requisitos))
-    telegram_app.add_handler(CommandHandler("docs_inicio", docs_inicio))
-    telegram_app.add_handler(CommandHandler("convenio_marco", convenio_marco))
-    telegram_app.add_handler(CommandHandler("convenio_especifico", convenio_especifico))
-    telegram_app.add_handler(CommandHandler("monotributo", monotributo))
-    telegram_app.add_handler(CommandHandler("art", art))
     
-    # Handler para callback queries (botones)
     telegram_app.add_handler(CallbackQueryHandler(manejar_botones))
-    
-    # Handler para mensajes de texto
     telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     
     logger.info("✅ Aplicación de Telegram configurada correctamente")
 
+# =================== RESTANTE DEL CÓDIGO IGUAL ===================
 async def setup_webhook_async():
-    """Configurar webhook de forma asíncrona"""
     try:
-        # Obtener URL de Render
         render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-electronica-utnfrc-bot')
         webhook_url = f"https://{render_service_name}.onrender.com/webhook"
         
-        # Configurar webhook
         await telegram_app.bot.set_webhook(
             url=webhook_url,
             allowed_updates=Update.ALL_TYPES,
@@ -556,7 +571,6 @@ async def setup_webhook_async():
         return False
 
 def setup_webhook_sync():
-    """Configurar webhook de forma síncrona"""
     try:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -568,25 +582,20 @@ def setup_webhook_sync():
         return False
 
 def run_flask_server():
-    """Ejecutar servidor Flask"""
     port = int(os.environ.get('PORT', 10000))
     logger.info(f"🌍 Iniciando servidor Flask en puerto {port}")
     serve(flask_app, host='0.0.0.0', port=port, threads=4)
 
 def run_polling_mode():
-    """Ejecutar en modo polling"""
     global keep_alive
     
     try:
-        # Obtener URL de la app
         render_service_name = os.environ.get('RENDER_SERVICE_NAME', 'pps-electronica-utnfrc-bot')
         app_url = f"https://{render_service_name}.onrender.com"
         
-        # Iniciar keep-alive
         keep_alive = KeepAliveService(app_url)
         keep_alive.start(interval_minutes=8)
         
-        # Iniciar Flask en segundo plano
         flask_thread = threading.Thread(target=run_flask_server, daemon=True)
         flask_thread.start()
         
@@ -595,10 +604,8 @@ def run_polling_mode():
         print("✅ Iniciando bot en modo polling...")
         print("=" * 60)
         
-        # Dar tiempo a que Flask inicie
         time.sleep(2)
         
-        # Iniciar bot en modo polling
         telegram_app.run_polling(
             poll_interval=1.0,
             timeout=30,
@@ -611,14 +618,11 @@ def run_polling_mode():
         raise
 
 def run_webhook_mode():
-    """Ejecutar en modo webhook"""
     try:
-        # Configurar webhook
         if not setup_webhook_sync():
             print("❌ Falló la configuración del webhook, cambiando a polling...")
             return False
         
-        # Iniciar servidor Flask con waitress
         port = int(os.environ.get('PORT', 10000))
         logger.info(f"🌍 Servidor web en puerto {port}")
         print(f"✅ Webhook configurado: https://pps-electronica-utnfrc-bot.onrender.com/webhook")
@@ -632,7 +636,6 @@ def run_webhook_mode():
         logger.error(f"❌ Error en modo webhook: {e}")
         return False
 
-# =================== MAIN ===================
 def main():
     print("=" * 60)
     print("🚀 INICIANDO BOT PPS - INGENIERÍA ELECTRÓNICA UTN FRC")
@@ -642,10 +645,8 @@ def main():
     print(f"Directorio docs: {DOCS_DIR}")
     print("=" * 60)
     
-    # Configurar bot
     setup_telegram_app()
     
-    # Determinar modo de operación
     use_webhook = WEBHOOK_MODE
     
     if use_webhook:
@@ -658,7 +659,6 @@ def main():
     if not use_webhook:
         print("🔄 Iniciando en modo polling...")
         try:
-            # Ejecutar modo polling
             run_polling_mode()
             
         except Exception as e:
