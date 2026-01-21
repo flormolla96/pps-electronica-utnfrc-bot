@@ -171,6 +171,15 @@ def webhook():
 
 # =================== INFORMACIÓN DEL BOT ===================
 INFO = {
+    "welcome": (
+        f"👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b><br>"
+        f"de la carrera <b>Ingeniería Electrónica - UTN FRC</b><br><br>"
+        "⬇️ Seleccioná una opción:"
+    ),
+    "menu_principal": (
+        f"<b>Menú Principal</b>\n\n"
+        "⬇️ Selecciona una opción:"
+    ),
     "inicio_pps": (
         "🏭 *INICIO DE PPS*\n\n"
         "*¿Qué es la Práctica Profesional Supervisada?*\n\n"
@@ -294,13 +303,13 @@ KEYWORDS = {
     "sin empresa": "no_empresa",
 }
 
-# =================== HANDLERS DEL BOT ===================
+# =================== TECLADOS DEL BOT ===================
 def teclado_menu_principal():
     keyboard = [
-        [InlineKeyboardButton("🏭 Inicio de la PPS", callback_data="menu_inicio_pps")],
-        [InlineKeyboardButton("🎓 Finalización de la PPS", callback_data="menu_finalizacion")],
-        [InlineKeyboardButton("❓ Preguntas frecuentes", callback_data="menu_faq")],
-        [InlineKeyboardButton("📞 Contacto", callback_data="menu_contacto")],
+        [InlineKeyboardButton("Inicio de la PPS", callback_data="menu_inicio_pps")],
+        [InlineKeyboardButton("Finalización de la PPS", callback_data="menu_finalizacion")],
+        [InlineKeyboardButton("Preguntas frecuentes", callback_data="menu_faq")],
+        [InlineKeyboardButton("Contacto", callback_data="menu_contacto")],
     ]
     return InlineKeyboardMarkup(keyboard)
 
@@ -313,21 +322,22 @@ def teclado_inicio_pps():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+# =================== HANDLERS DEL BOT ===================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /start con menú visual"""
+    welcome_text = INFO["welcome"]
     await update.message.reply_text(
-        "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b><br>"
-        "de la carrera <b>Ingeniería Electrónica - UTN FRC</b><br><br>"
-        "⬇️ Seleccioná una opción:",
+        welcome_text,
         parse_mode="HTML",
         reply_markup=teclado_menu_principal()
     )
 
-
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /menu para mostrar el menú principal"""
+    menu_text = INFO["menu_principal"]
     await update.message.reply_text(
-        "📋 *Menú Principal*\n\n"
-        "Seleccioná una opción:",
-        parse_mode="MarkdownV2",
+        menu_text,
+        parse_mode="HTML",
         reply_markup=teclado_menu_principal()
     )
 
@@ -339,10 +349,10 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(f"Callback recibido: {data}")
 
     # MENÚ PRINCIPAL
-    if data == "menu_principal":
+    if query.data == "menu_principal":
         await query.edit_message_text(
-            "📋 *Menú Principal*\n\nSeleccioná una opción:",
-            parse_mode="MarkdownV2",
+            INFO["menu_principal"],
+            parse_mode="HTML",
             reply_markup=teclado_menu_principal()
         )
     
