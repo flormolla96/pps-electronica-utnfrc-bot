@@ -172,8 +172,8 @@ def webhook():
 # =================== INFORMACIÓN DEL BOT ===================
 INFO = {
     "welcome": (
-        "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b><br>"
-        "de la carrera <b>Ingeniería Electrónica - UTN FRC</b><br><br>"
+        "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b>\n"
+        "de la carrera <b>Ingeniería Electrónica - UTN FRC</b>\n\n"
         "⬇️ Seleccioná una opción:"
     ),
     "menu_principal": (
