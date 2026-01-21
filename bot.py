@@ -315,12 +315,13 @@ def teclado_inicio_pps():
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👋 ¡Hola! Soy el bot de *Prácticas Profesionales Supervisadas*\n"
-        "de la carrera *Ingeniería Electrónica \\- UTN FRC*\n\n"
+        "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b><br>"
+        "de la carrera <b>Ingeniería Electrónica - UTN FRC</b><br><br>"
         "⬇️ Seleccioná una opción:",
-        parse_mode="MarkdownV2",
+        parse_mode="HTML",
         reply_markup=teclado_menu_principal()
     )
+
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
