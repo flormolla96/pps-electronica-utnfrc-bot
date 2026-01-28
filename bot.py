@@ -189,12 +189,12 @@ INFO = {
         "🔸 Proyecto innovador en empresa o centro de investigación\n\n"
         "❗ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
         "<b>Pasos para iniciar:</b>\n"
-        "1\\. Verificar requisitos académicos ✅\n"
-        "2\\. Buscar empresa/institución 🏢\n"
-        "3\\. Completar documentación inicial 📄\n"
-        "4\\. Dejar documentación en Departamento de Electrónica 📄\n"
-        "5\\. Esperar aprobación ⌛\n"
-        "6\\. Iniciar prácticas 🚀\n\n"
+        "1. Verificar requisitos académicos ✅\n"
+        "2. Buscar empresa/institución 🏢\n"
+        "3. Completar documentación inicial 📄\n"
+        "4. Dejar documentación en Departamento de Electrónica 📄\n"
+        "5. Esperar aprobación ⌛\n"
+        "6. Iniciar prácticas 🚀\n\n"
         "👇 <b>Selecciona una opción:</b>"
     ),
     "finalizacion": (
@@ -218,23 +218,6 @@ INFO = {
         "Mail: pps@frce\\.utn\\.edu\\.ar\n"
         "Horarios de consulta: Lunes a Viernes 9:00\\-12:00\n"
         "Aula virtual: Campus Virtual UTN FRC\n"
-    ),
-    "inicio": (
-        "*Inicio de la PPS*\n\n"
-        "❗*¿Qué es la Práctica Profesional Supervisada \\(PPS\\)?*\n\n"
-        "La PPS es una *materia obligatoria* de la carrera de Ingeniería Electrónica\\.\n"
-        "Todos los estudiantes deben realizarla y se evalúa con condición *aprobado*\\.\n\n"
-        "Su objetivo es que el/la estudiante pueda *aplicar los conocimientos adquiridos* "
-        "en la carrera en un *entorno profesional real*, adquirir experiencia, "
-        "vincularse con el ámbito laboral y desarrollar un *proyecto técnico*\\.\n\n"
-        "La PPS puede realizarse en una *empresa como en un centro de investigación*\\.\n"
-        "Puede desarrollarse en un lugar donde el/la estudiante ya se encuentre trabajando, "
-        "ya sea en relación de dependencia, como pasante o investigador\\.\n\n"
-        "En todos los casos, debe presentarse un *proyecto innovador* vinculado a la Ingeniería Electrónica, "
-        "con una carga horaria total de *200 horas*\\.\n\n"
-        "Para comenzar, es necesario cumplir con los requisitos académicos y presentar la documentación correspondiente\\.\n\n"
-        "✅ *Primero*: verificá requisitos académicos\n"
-        "📄 *Después*: juntá la documentación\n"
     ),
     "requisitos": (
         "✅ *Requisitos académicos para iniciar la PPS*\n\n"
@@ -299,8 +282,6 @@ KEYWORDS = {
     "monotributo": "monotributo",
     "informe": "informe",
     "certificado": "certificado",
-    "no tengo empresa": "no_empresa",
-    "sin empresa": "no_empresa",
 }
 
 # =================== TECLADOS DEL BOT ===================
@@ -317,14 +298,18 @@ def teclado_inicio_pps():
     keyboard = [
         [InlineKeyboardButton("✅ Requisitos Académicos", callback_data="requisitos")],
         [InlineKeyboardButton("📄 Documentación Inicial", callback_data="docs_inicio")],
-        [InlineKeyboardButton("🏢 No tengo empresa", callback_data="no_empresa")],
         [InlineKeyboardButton("⬅️ Menú Principal", callback_data="menu_principal")]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+def teclado_volver_a_inicio_pps():
+    keyboard = [
+        [InlineKeyboardButton("⬅️ Volver a Inicio PPS", callback_data="menu_inicio_pps")]
     ]
     return InlineKeyboardMarkup(keyboard)
 
 # =================== HANDLERS DEL BOT ===================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Comando /start con menú visual"""
     welcome_text = INFO["welcome"]
     await update.message.reply_text(
         welcome_text,
@@ -378,21 +363,12 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="MarkdownV2"
         )
     
-    elif data == "no_empresa":
-        await query.edit_message_text(
-            "🏢 *Sin empresa todavía*\n\n"
-            "1\\) Contame tu orientación/interés \\(embebidos, potencia, telecom, control, etc\\.\\)\n"
-            "2\\) ¿Tenés CV actualizado?\n"
-            "3\\) ¿Podés hacer presencial/híbrido?\n\n"
-            "Con eso te sugiero un plan para conseguir lugar y armar mails de contacto\\.",
-            parse_mode="MarkdownV2"
-        )
-    
     # OTRAS OPCIONES DEL MENÚ PRINCIPAL
     elif data == "menu_finalizacion":
         await query.edit_message_text(
             INFO["finalizacion"],
-            parse_mode="MarkdownV2"
+            parse_mode="MarkdownV2",
+            reply_markup=teclado_volver_a_inicio_pps()
         )
     
     elif data == "menu_faq":
@@ -431,6 +407,34 @@ async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
             INFO["inicio_pps"],
             parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
             reply_markup=teclado_inicio_pps()
+        )
+
+async def requisitos(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        await update.message.reply_text(
+            INFO["requisitos"],
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_inicio_pps()
+        )
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(
+            INFO["requisitos"],
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_inicio_pps()
+        )
+
+async def docs_inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        await update.message.reply_text(
+            INFO["docs_inicio"],
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_inicio_pps()
+        )
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(
+            INFO["docs_inicio"],
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_inicio_pps()
         )
 
 async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -476,15 +480,6 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📄 *Certificado / Constancia*\n\n"
             "En general lo emite la empresa e incluye: nombre, DNI, período, horas y tareas\\.\n"
             "Si querés, te genero un modelo para que lo firmen\\.",
-            parse_mode="MarkdownV2",
-        )
-    elif intent == "no_empresa":
-        return await update.message.reply_text(
-            "🏢 *Sin empresa todavía*\n\n"
-            "1\\) Contame tu orientación/interés \\(embebidos, potencia, telecom, control, etc\\.\\)\n"
-            "2\\) ¿Tenés CV actualizado?\n"
-            "3\\) ¿Podés hacer presencial/híbrido?\n\n"
-            "Con eso te sugiero un plan para conseguir lugar y armar mails de contacto\\.",
             parse_mode="MarkdownV2",
         )
     elif intent == "docs_inicio":
@@ -554,6 +549,8 @@ def setup_telegram_app():
     telegram_app.add_handler(CommandHandler("start", start))
     telegram_app.add_handler(CommandHandler("menu", menu))
     telegram_app.add_handler(CommandHandler("inicio", inicio))
+    telegram_app.add_handler(CommandHandler("requisitos", requisitos))  
+    telegram_app.add_handler(CommandHandler("docs_inicio", docs_inicio))  
     telegram_app.add_handler(CommandHandler("finalizacion", finalizacion))
     telegram_app.add_handler(CommandHandler("faq", faq))
     telegram_app.add_handler(CommandHandler("contacto", contacto))
