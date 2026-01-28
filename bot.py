@@ -308,6 +308,17 @@ def teclado_volver_a_inicio_pps():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+def teclado_documentacion():
+    """Teclado para el submenú de documentación"""
+    keyboard = [
+        [InlineKeyboardButton("🧾 Formulario 001", callback_data="f001")],
+        [InlineKeyboardButton("🧾 Convenio Marco", callback_data="convenio_marco")],
+        [InlineKeyboardButton("🧾 Convenio Específico", callback_data="convenio_especifico")],
+        [InlineKeyboardButton("🛡️ ART", callback_data="art")],
+        [InlineKeyboardButton("⬅️ Volver a Inicio PPS", callback_data="menu_inicio_pps")]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
 # =================== HANDLERS DEL BOT ===================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = INFO["welcome"]
@@ -387,32 +398,29 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
         )
     
-    # BOTONES DE DOCUMENTOS (comandos existentes)
+    # BOTONES DE DOCUMENTOS
     elif data == "f001":
         await f001(query, context)
+    
     elif data == "convenio_marco":
         await query.edit_message_text(
-            INFO["convenio_marco"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            INFO["convenio_marco"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()  # Volver al menú de documentación
         )
+    
     elif data == "convenio_especifico":
         await query.edit_message_text(
-            INFO["convenio_especifico"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            INFO["convenio_especifico"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()  # Volver al menú de documentación
         )
+    
     elif data == "art":
         await query.edit_message_text(
-            INFO["art"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
-        )
-    elif data == "monotributo":
-        await query.edit_message_text(
-            INFO["monotributo"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            INFO["art"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()  # Volver al menú de documentación
         )
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -446,15 +454,17 @@ async def requisitos(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def docs_inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(
-            INFO["docs_inicio"],
+            "<b>Documentación para INICIO de PPS</b>\n\n"
+            "Selecciona el documento que necesitas:",
             parse_mode="HTML",
-            reply_markup=teclado_volver_a_inicio_pps()
+            reply_markup=teclado_documentacion()
         )
     elif update.callback_query:
         await update.callback_query.edit_message_text(
-            INFO["docs_inicio"],
+            "<b>Documentación para INICIO de PPS</b>\n\n"
+            "Selecciona el documento que necesitas:",
             parse_mode="HTML",
-            reply_markup=teclado_volver_a_inicio_pps()
+            reply_markup=teclado_documentacion()
         )
 
 async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -499,6 +509,91 @@ async def contacto(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
         )
 
+async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    texto = (
+        "🧾 <b>Formulario 001</b>\n\n"
+        "📌 Debe completarse <b>en formato digital</b>.\n\n"
+        "Te dejo:\n"
+        "1) el formulario vacío\n"
+        "2) un ejemplo completo\n\n"
+        "Luego escribime <b>'preguntas f001'</b> para ver dudas típicas."
+    )
+    
+    # Determinar si es mensaje o callback query
+    if isinstance(update, Update) and update.message:
+        user_message = update.message
+        await user_message.reply_text(texto, parse_mode="HTML")
+    elif isinstance(update, Update) and update.callback_query:
+        user_message = update.callback_query.message
+        await user_message.reply_text(texto, parse_mode="HTML")
+    else:
+        user_message = update.message if hasattr(update, 'message') else None
+        if user_message:
+            await user_message.reply_text(texto, parse_mode="HTML")
+        else:
+            return
+
+    if F001_PDF.exists():
+        await user_message.reply_document(
+            document=open(F001_PDF, "rb"), 
+            filename=F001_PDF.name,
+            reply_markup=teclado_documentacion()  # Agregar teclado después de enviar archivo
+        )
+    else:
+        await user_message.reply_text(
+            "⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs.",
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+
+    if F001_EJEMPLO_PDF.exists():
+        await user_message.reply_document(
+            document=open(F001_EJEMPLO_PDF, "rb"), 
+            filename=F001_EJEMPLO_PDF.name
+        )
+
+async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        await update.message.reply_text(
+            INFO["convenio_marco"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(
+            INFO["convenio_marco"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+
+async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        await update.message.reply_text(
+            INFO["convenio_especifico"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(
+            INFO["convenio_especifico"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+
+async def art(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        await update.message.reply_text(
+            INFO["art"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+    elif update.callback_query:
+        await update.callback_query.edit_message_text(
+            INFO["art"],
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
+        )
+
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
 
@@ -517,51 +612,45 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📝 <b>Informe final</b>\n\n"
             "Decime qué te piden en tu cátedra (índice / formato / extensión) y te armo una plantilla.\n"
             "Si ya tenés el enunciado, pegalo acá.",
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            parse_mode="HTML",
         )
     elif intent == "certificado":
         return await update.message.reply_text(
             "📄 <b>Certificado / Constancia</b>\n\n"
             "En general lo emite la empresa e incluye: nombre, DNI, período, horas y tareas.\n"
             "Si querés, te genero un modelo para que lo firmen.",
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            parse_mode="HTML",
         )
     elif intent == "docs_inicio":
-        return await update.message.reply_text(
-            INFO["docs_inicio"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
-        )
+        return await docs_inicio(update, context)
     elif intent == "requisitos":
-        return await update.message.reply_text(
-            INFO["requisitos"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
-        )
+        return await requisitos(update, context)
     elif intent == "convenio_marco":
         return await update.message.reply_text(
             INFO["convenio_marco"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
         )
     elif intent == "convenio_especifico":
         return await update.message.reply_text(
             INFO["convenio_especifico"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
         )
     elif intent == "art":
         return await update.message.reply_text(
             INFO["art"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
         )
     elif intent == "monotributo":
         return await update.message.reply_text(
             INFO["monotributo"], 
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            parse_mode="HTML",
+            reply_markup=teclado_documentacion()
         )
+    elif intent == "f001" or "formulario 001" in text or "form001" in text:
+        return await f001(update, context)
     else:
         await update.message.reply_text(
             "No estoy seguro qué necesitás 🙃\n"
@@ -570,43 +659,9 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "- 'documentos' para ver documentación\n"
             "- 'requisitos' para ver requisitos académicos\n"
             "- 'final' para finalización",
-            parse_mode="HTML"  # CAMBIÉ de MarkdownV2 a HTML
+            parse_mode="HTML"
         )
 
-async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    texto = (
-        "🧾 <b>Formulario 001</b>\n\n"
-        "📌 Debe completarse <b>en formato digital</b>.\n\n"
-        "Te dejo:\n"
-        "1) el formulario vacío\n"
-        "2) un ejemplo completo\n\n"
-        "Luego escribime <b>'preguntas f001'</b> para ver dudas típicas."
-    )
-    
-    # Determinar si es mensaje o callback query
-    if isinstance(update, Update) and update.message:
-        user_message = update.message
-        await user_message.reply_text(texto, parse_mode="HTML")  # CAMBIÉ a HTML
-    elif isinstance(update, Update) and update.callback_query:
-        user_message = update.callback_query.message
-        await user_message.reply_text(texto, parse_mode="HTML")  # CAMBIÉ a HTML
-    else:
-        # Si es el callback query directamente
-        user_message = update.message if hasattr(update, 'message') else None
-        if user_message:
-            await user_message.reply_text(texto, parse_mode="HTML")  # CAMBIÉ a HTML
-        else:
-            return
-
-    if F001_PDF.exists():
-        await user_message.reply_document(document=open(F001_PDF, "rb"), filename=F001_PDF.name)
-    else:
-        await user_message.reply_text("⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs.", parse_mode="HTML")
-
-    if F001_EJEMPLO_PDF.exists():
-        await user_message.reply_document(document=open(F001_EJEMPLO_PDF, "rb"), filename=F001_EJEMPLO_PDF.name)
-    else:
-        await user_message.reply_text("⚠️ No encuentro el PDF de ejemplo del Formulario 001 en la carpeta /docs.", parse_mode="HTML")
 
 # =================== CONFIGURACIÓN DEL BOT ===================
 def setup_telegram_app():
@@ -618,7 +673,11 @@ def setup_telegram_app():
     telegram_app.add_handler(CommandHandler("menu", menu))
     telegram_app.add_handler(CommandHandler("inicio", inicio))
     telegram_app.add_handler(CommandHandler("requisitos", requisitos))  
-    telegram_app.add_handler(CommandHandler("docs_inicio", docs_inicio))  
+    telegram_app.add_handler(CommandHandler("docs_inicio", docs_inicio))
+    telegram_app.add_handler(CommandHandler("f001", f001))
+    telegram_app.add_handler(CommandHandler("convenio_marco", convenio_marco))
+    telegram_app.add_handler(CommandHandler("convenio_especifico", convenio_especifico))
+    telegram_app.add_handler(CommandHandler("art", art))  
     telegram_app.add_handler(CommandHandler("finalizacion", finalizacion))
     telegram_app.add_handler(CommandHandler("faq", faq))
     telegram_app.add_handler(CommandHandler("contacto", contacto))
