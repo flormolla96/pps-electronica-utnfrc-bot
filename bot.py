@@ -198,67 +198,67 @@ INFO = {
         "👇 <b>Selecciona una opción:</b>"
     ),
     "finalizacion": (
-        "🔵 *Finalización de la Práctica*\n\n"
-        "1\\) Verificá que cumpliste la carga horaria requerida\\.\n"
-        "2\\) Prepará el informe final \\(estructura y formato según cátedra\\)\\.\n"
-        "3\\) Pedí certificado/constancia a la empresa \\(si aplica\\)\\.\n"
-        "4\\) Entregá informe \\+ documentación final antes de la fecha límite\\.\n\n"
-        "📌 Tip: Si te falta el certificado, escribí *'certificado'*\\.\n"
-        "Escribí *'informe'* para más detalles sobre el informe final\\."
+        "🔵 <b>Finalización de la Práctica</b>\n\n"
+        "1. Verificá que cumpliste la carga horaria requerida.\n"
+        "2. Prepará el informe final (estructura y formato según cátedra).\n"
+        "3. Pedí certificado/constancia a la empresa (si aplica).\n"
+        "4. Entregá informe + documentación final antes de la fecha límite.\n\n"
+        "📌 <b>Tip:</b> Si te falta el certificado, escribí <b>'certificado'</b>.\n"
+        "Escribí <b>'informe'</b> para más detalles sobre el informe final."
     ),
     "faq": (
-        "❓ *Preguntas frecuentes*\n\n"
-        "• *¿Qué pasa si no consigo empresa?* → escribí: no tengo empresa\n"
-        "• *¿Qué documentos necesito al inicio?* → escribí: documentos inicio\n"
-        "• *¿Cómo es el informe final?* → escribí: informe\n"
-        "• *¿Necesito certificado?* → escribí: certificado\n"
+        "❓ <b>Preguntas frecuentes</b>\n\n"
+        "• <b>¿Qué pasa si no consigo empresa?</b> → escribí: no tengo empresa\n"
+        "• <b>¿Qué documentos necesito al inicio?</b> → escribí: documentos inicio\n"
+        "• <b>¿Cómo es el informe final?</b> → escribí: informe\n"
+        "• <b>¿Necesito certificado?</b> → escribí: certificado"
     ),
     "contacto": (
-        "📩 *Contacto / Cátedra*\n\n"
-        "Mail: pps@frce\\.utn\\.edu\\.ar\n"
-        "Horarios de consulta: Lunes a Viernes 9:00\\-12:00\n"
-        "Aula virtual: Campus Virtual UTN FRC\n"
+        "📩 <b>Contacto / Cátedra</b>\n\n"
+        "<b>Mail:</b> pps@frce.utn.edu.ar\n"
+        "<b>Horarios de consulta:</b> Lunes a Viernes 9:00-12:00\n"
+        "<b>Aula virtual:</b> Campus Virtual UTN FRC"
     ),
     "requisitos": (
-        "✅ *Requisitos académicos para iniciar la PPS*\n\n"
+        "✅ <b>Requisitos académicos para iniciar la PPS</b>\n\n"
         "Para poder comenzar, el/la estudiante debe:\n"
-        "• Tener *todas las asignaturas de 4º año regularizadas*\\.\n"
-        "• Tener *todas las asignaturas de 3º año aprobadas*\\.\n\n"
-        "📌 Si no cumplís alguno de estos puntos, por el momento no podrás realizar PPS\\."
+        "• Tener <b>todas las asignaturas de 4º año regularizadas</b>.\n"
+        "• Tener <b>todas las asignaturas de 3º año aprobadas</b>.\n\n"
+        "📌 <b>Si no cumplís alguno de estos puntos, por el momento no podrás realizar PPS.</b>"
     ),
     "docs_inicio": (
-        "📄 *Documentación para INICIO de PPS*\n\n"
-        "1\\) *Formulario 001* \\(completar *digital*, no a mano\\)\n"
-        "2\\) *Convenio Marco de Prácticas Supervisadas* \\(la empresa lo completa *una sola vez*\\)\n"
-        "3\\) *Convenio Específico de Prácticas Supervisadas* \\(*solo* si el/la estudiante *no* es parte de la empresa ni pasante\\)\n"
-        "4\\) El/la estudiante debe enviar *copia de ART*\n\n"
-        "🔸 Si la empresa es *monotributista*: enviar *constancia de AFIP*\n\n"
-        "Escribí: /f001 /convenio\\_marco /convenio\\_especifico /monotributo /art\n"
-        "O escribí las palabras clave directamente\\."
+        "📄 <b>Documentación para INICIO de PPS</b>\n\n"
+        "1. <b>Formulario 001</b> (completar <b>digital</b>, no a mano)\n"
+        "2. <b>Convenio Marco de Prácticas Supervisadas</b> (la empresa lo completa <b>una sola vez</b>)\n"
+        "3. <b>Convenio Específico de Prácticas Supervisadas</b> (<b>solo</b> si el/la estudiante <b>no</b> es parte de la empresa ni pasante)\n"
+        "4. El/la estudiante debe enviar <b>copia de ART</b>\n\n"
+        "🔸 <b>Si la empresa es monotributista:</b> enviar <b>constancia de AFIP</b>\n\n"
+        "<b>Escribí:</b> /f001 /convenio_marco /convenio_especifico /monotributo /art\n"
+        "<b>O escribí las palabras clave directamente.</b>"
     ),
     "convenio_marco": (
-        "📑 *Convenio Marco de PPS*\n\n"
-        "• Lo completa la *empresa*\\.\n"
-        "• Se presenta *una sola vez* \\(para futuras PPS no se vuelve a completar, salvo que la cátedra indique lo contrario\\)\\.\n\n"
-        "Si querés, decime si tu empresa ya tiene convenio marco cargado y te digo qué sigue\\."
+        "📑 <b>Convenio Marco de PPS</b>\n\n"
+        "• Lo completa la <b>empresa</b>.\n"
+        "• Se presenta <b>una sola vez</b> (para futuras PPS no se vuelve a completar, salvo que la cátedra indique lo contrario).\n\n"
+        "Si querés, decime si tu empresa ya tiene convenio marco cargado y te digo qué sigue."
     ),
     "convenio_especifico": (
-        "📘 *Convenio Específico de PPS*\n\n"
-        "⚠️ Solo lo completan estudiantes que *NO* sean parte de la empresa ni pasantes\\.\n\n"
+        "📘 <b>Convenio Específico de PPS</b>\n\n"
+        "⚠️ <b>Solo lo completan estudiantes que NO sean parte de la empresa ni pasantes.</b>\n\n"
         "Si me decís tu situación:\n"
-        "1\\) empleado/a\n"
-        "2\\) pasante\n"
-        "3\\) externo/a\n"
-        "te confirmo si lo necesitás\\."
+        "1) empleado/a\n"
+        "2) pasante\n"
+        "3) externo/a\n"
+        "te confirmo si lo necesitás."
     ),
     "monotributo": (
-        "🧾 *Empresa monotributista*\n\n"
-        "Si la empresa es monotributista, se debe enviar *constancia de AFIP* junto con la documentación de inicio\\."
+        "🧾 <b>Empresa monotributista</b>\n\n"
+        "Si la empresa es monotributista, se debe enviar <b>constancia de AFIP</b> junto con la documentación de inicio."
     ),
     "art": (
-        "🛡️ *ART*\n\n"
-        "El/la estudiante debe enviar *copia de ART* como parte de la documentación de inicio\\.\n"
-        "Si no sabés cuál es la ART o cómo pedir la constancia, decime cómo es tu vínculo con la empresa y te guío\\."
+        "🛡️ <b>ART</b>\n\n"
+        "El/la estudiante debe enviar <b>copia de ART</b> como parte de la documentación de inicio.\n"
+        "Si no sabés cuál es la ART o cómo pedir la constancia, decime cómo es tu vínculo con la empresa y te guío."
     ),
 }
 
@@ -335,7 +335,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(f"Callback recibido: {data}")
 
     # MENÚ PRINCIPAL
-    if data == "menu_principal":  # CORRECCIÓN: cambié query.data por data
+    if data == "menu_principal":
         await query.edit_message_text(
             INFO["menu_principal"],
             parse_mode="HTML",
@@ -346,7 +346,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "menu_inicio_pps":
         await query.edit_message_text(
             INFO["inicio_pps"],
-            parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
+            parse_mode="HTML",
             reply_markup=teclado_inicio_pps()
         )
     
@@ -354,46 +354,66 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "requisitos":
         await query.edit_message_text(
             INFO["requisitos"],
-            parse_mode="MarkdownV2"
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_inicio_pps()  # FALTABA agregar el teclado aquí
         )
     
     elif data == "docs_inicio":
         await query.edit_message_text(
             INFO["docs_inicio"],
-            parse_mode="MarkdownV2"
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_inicio_pps()  # FALTABA agregar el teclado aquí
         )
     
     # OTRAS OPCIONES DEL MENÚ PRINCIPAL
     elif data == "menu_finalizacion":
         await query.edit_message_text(
             INFO["finalizacion"],
-            parse_mode="MarkdownV2",
-            reply_markup=teclado_volver_a_inicio_pps()
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
         )
     
     elif data == "menu_faq":
         await query.edit_message_text(
             INFO["faq"],
-            parse_mode="MarkdownV2"
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
         )
     
     elif data == "menu_contacto":
         await query.edit_message_text(
             INFO["contacto"],
-            parse_mode="MarkdownV2"
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
         )
     
     # BOTONES DE DOCUMENTOS (comandos existentes)
     elif data == "f001":
         await f001(query, context)
     elif data == "convenio_marco":
-        await query.edit_message_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
+        await query.edit_message_text(
+            INFO["convenio_marco"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif data == "convenio_especifico":
-        await query.edit_message_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
+        await query.edit_message_text(
+            INFO["convenio_especifico"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif data == "art":
-        await query.edit_message_text(INFO["art"], parse_mode="MarkdownV2")
+        await query.edit_message_text(
+            INFO["art"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif data == "monotributo":
-        await query.edit_message_text(INFO["monotributo"], parse_mode="MarkdownV2")
+        await query.edit_message_text(
+            INFO["monotributo"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
@@ -439,21 +459,45 @@ async def docs_inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def finalizacion(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
-        await update.message.reply_text(INFO["finalizacion"], parse_mode="MarkdownV2")
+        await update.message.reply_text(
+            INFO["finalizacion"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["finalizacion"], parse_mode="MarkdownV2")
+        await update.callback_query.edit_message_text(
+            INFO["finalizacion"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
 
 async def faq(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
-        await update.message.reply_text(INFO["faq"], parse_mode="MarkdownV2")
+        await update.message.reply_text(
+            INFO["faq"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["faq"], parse_mode="MarkdownV2")
+        await update.callback_query.edit_message_text(
+            INFO["faq"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
 
 async def contacto(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
-        await update.message.reply_text(INFO["contacto"], parse_mode="MarkdownV2")
+        await update.message.reply_text(
+            INFO["contacto"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif update.callback_query:
-        await update.callback_query.edit_message_text(INFO["contacto"], parse_mode="MarkdownV2")
+        await update.callback_query.edit_message_text(
+            INFO["contacto"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
@@ -470,75 +514,99 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return await finalizacion(update, context)
     elif intent == "informe":
         return await update.message.reply_text(
-            "📝 *Informe final*\n\n"
-            "Decime qué te piden en tu cátedra \\(índice / formato / extensión\\) y te armo una plantilla\\.\n"
-            "Si ya tenés el enunciado, pegalo acá\\.",
-            parse_mode="MarkdownV2",
+            "📝 <b>Informe final</b>\n\n"
+            "Decime qué te piden en tu cátedra (índice / formato / extensión) y te armo una plantilla.\n"
+            "Si ya tenés el enunciado, pegalo acá.",
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
         )
     elif intent == "certificado":
         return await update.message.reply_text(
-            "📄 *Certificado / Constancia*\n\n"
-            "En general lo emite la empresa e incluye: nombre, DNI, período, horas y tareas\\.\n"
-            "Si querés, te genero un modelo para que lo firmen\\.",
-            parse_mode="MarkdownV2",
+            "📄 <b>Certificado / Constancia</b>\n\n"
+            "En general lo emite la empresa e incluye: nombre, DNI, período, horas y tareas.\n"
+            "Si querés, te genero un modelo para que lo firmen.",
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
         )
     elif intent == "docs_inicio":
-        return await update.message.reply_text(INFO["docs_inicio"], parse_mode="MarkdownV2")
+        return await update.message.reply_text(
+            INFO["docs_inicio"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif intent == "requisitos":
-        return await update.message.reply_text(INFO["requisitos"], parse_mode="MarkdownV2")
+        return await update.message.reply_text(
+            INFO["requisitos"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif intent == "convenio_marco":
-        return await update.message.reply_text(INFO["convenio_marco"], parse_mode="MarkdownV2")
+        return await update.message.reply_text(
+            INFO["convenio_marco"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif intent == "convenio_especifico":
-        return await update.message.reply_text(INFO["convenio_especifico"], parse_mode="MarkdownV2")
+        return await update.message.reply_text(
+            INFO["convenio_especifico"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif intent == "art":
-        return await update.message.reply_text(INFO["art"], parse_mode="MarkdownV2")
+        return await update.message.reply_text(
+            INFO["art"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     elif intent == "monotributo":
-        return await update.message.reply_text(INFO["monotributo"], parse_mode="MarkdownV2")
+        return await update.message.reply_text(
+            INFO["monotributo"], 
+            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+        )
     else:
         await update.message.reply_text(
             "No estoy seguro qué necesitás 🙃\n"
             "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n"
-            "\\- 'inicio' para comenzar PPS\n"
-            "\\- 'documentos' para ver documentación\n"
-            "\\- 'requisitos' para ver requisitos académicos\n"
-            "\\- 'final' para finalización",
-            parse_mode="MarkdownV2"
+            "- 'inicio' para comenzar PPS\n"
+            "- 'documentos' para ver documentación\n"
+            "- 'requisitos' para ver requisitos académicos\n"
+            "- 'final' para finalización",
+            parse_mode="HTML"  # CAMBIÉ de MarkdownV2 a HTML
         )
 
 async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = (
-        "🧾 *Formulario 001*\n\n"
-        "📌 Debe completarse *en formato digital*\\.\n\n"
+        "🧾 <b>Formulario 001</b>\n\n"
+        "📌 Debe completarse <b>en formato digital</b>.\n\n"
         "Te dejo:\n"
-        "1\\) el formulario vacío\n"
-        "2\\) un ejemplo completo\n\n"
-        "Luego escribime *'preguntas f001'* para ver dudas típicas\\."
+        "1) el formulario vacío\n"
+        "2) un ejemplo completo\n\n"
+        "Luego escribime <b>'preguntas f001'</b> para ver dudas típicas."
     )
     
     # Determinar si es mensaje o callback query
     if isinstance(update, Update) and update.message:
         user_message = update.message
-        await user_message.reply_text(texto, parse_mode="MarkdownV2")
+        await user_message.reply_text(texto, parse_mode="HTML")  # CAMBIÉ a HTML
     elif isinstance(update, Update) and update.callback_query:
         user_message = update.callback_query.message
-        await user_message.reply_text(texto, parse_mode="MarkdownV2")
+        await user_message.reply_text(texto, parse_mode="HTML")  # CAMBIÉ a HTML
     else:
         # Si es el callback query directamente
         user_message = update.message if hasattr(update, 'message') else None
         if user_message:
-            await user_message.reply_text(texto, parse_mode="MarkdownV2")
+            await user_message.reply_text(texto, parse_mode="HTML")  # CAMBIÉ a HTML
         else:
             return
 
     if F001_PDF.exists():
         await user_message.reply_document(document=open(F001_PDF, "rb"), filename=F001_PDF.name)
     else:
-        await user_message.reply_text("⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs\\.")
+        await user_message.reply_text("⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs.", parse_mode="HTML")
 
     if F001_EJEMPLO_PDF.exists():
         await user_message.reply_document(document=open(F001_EJEMPLO_PDF, "rb"), filename=F001_EJEMPLO_PDF.name)
     else:
-        await user_message.reply_text("⚠️ No encuentro el PDF de ejemplo del Formulario 001 en la carpeta /docs\\.")
+        await user_message.reply_text("⚠️ No encuentro el PDF de ejemplo del Formulario 001 en la carpeta /docs.", parse_mode="HTML")
 
 # =================== CONFIGURACIÓN DEL BOT ===================
 def setup_telegram_app():
