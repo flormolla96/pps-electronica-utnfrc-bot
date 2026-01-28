@@ -181,21 +181,21 @@ INFO = {
         "⬇️ Selecciona una opción:"
     ),
     "inicio_pps": (
-        "🏭 *INICIO DE PPS*\n\n"
-        "*¿Qué es la Práctica Profesional Supervisada?*\n\n"
-        "🔸 Es una *materia obligatoria* de la carrera\n"
-        "🔸 Se evalúa con condición *aprobado*\n"
-        "🔸 *200 horas* de duración\n"
+        "🏭 <b>INICIO DE PPS</b>\n\n"
+        "<b>¿Qué es la Práctica Profesional Supervisada?</b>\n\n"
+        "🔸 Es una <b>materia obligatoria</b> de la carrera\n"
+        "🔸 Se evalúa con condición <b>aprobado</b>\n"
+        "🔸 <b>200 horas</b> de duración\n"
         "🔸 Proyecto innovador en empresa o centro de investigación\n\n"
-        "❗ *Importante:* Debe realizarse en un ámbito profesional\n\n"
-        "*Pasos para iniciar:*\n"
+        "❗ <b>Importante:</b> Debe realizarse en un ámbito profesional\n\n"
+        "<b>Pasos para iniciar:</b>\n"
         "1\\. Verificar requisitos académicos ✅\n"
         "2\\. Buscar empresa/institución 🏢\n"
         "3\\. Completar documentación inicial 📄\n"
         "4\\. Dejar documentación en Departamento de Electrónica 📄\n"
         "5\\. Esperar aprobación ⌛\n"
         "6\\. Iniciar prácticas 🚀\n\n"
-        "👇 *Selecciona una opción:*"
+        "👇 <b>Selecciona una opción:</b>"
     ),
     "finalizacion": (
         "🔵 *Finalización de la Práctica*\n\n"
@@ -341,6 +341,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=teclado_menu_principal()
     )
 
+# =================== HANDLERS DEL BOT ===================
 async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -349,7 +350,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info(f"Callback recibido: {data}")
 
     # MENÚ PRINCIPAL
-    if query.data == "menu_principal":
+    if data == "menu_principal":  # CORRECCIÓN: cambié query.data por data
         await query.edit_message_text(
             INFO["menu_principal"],
             parse_mode="HTML",
@@ -360,7 +361,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "menu_inicio_pps":
         await query.edit_message_text(
             INFO["inicio_pps"],
-            parse_mode="MarkdownV2",
+            parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
             reply_markup=teclado_inicio_pps()
         )
     
@@ -422,13 +423,13 @@ async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(
             INFO["inicio_pps"],
-            parse_mode="MarkdownV2",
+            parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
             reply_markup=teclado_inicio_pps()
         )
     elif update.callback_query:
         await update.callback_query.edit_message_text(
             INFO["inicio_pps"],
-            parse_mode="MarkdownV2",
+            parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
             reply_markup=teclado_inicio_pps()
         )
 
