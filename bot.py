@@ -233,8 +233,7 @@ INFO = {
         "3. <b>Convenio Específico de Prácticas Supervisadas</b> (<b>solo</b> si el/la estudiante <b>no</b> es parte de la empresa ni pasante)\n"
         "4. El/la estudiante debe enviar <b>copia de ART</b>\n\n"
         "🔸 <b>Si la empresa es monotributista:</b> enviar <b>constancia de AFIP</b>\n\n"
-        "<b>Escribí:</b> /f001 /convenio_marco /convenio_especifico /monotributo /art\n"
-        "<b>O escribí las palabras clave directamente.</b>"
+        "👇 <b>Selecciona una opción:</b>"
     ),
     "convenio_marco": (
         "📑 <b>Convenio Marco de PPS</b>\n\n"
@@ -366,7 +365,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             INFO["requisitos"],
             parse_mode="HTML",
-            reply_markup=teclado_volver_a_inicio_pps()  # FALTABA agregar el teclado aquí
+            reply_markup=teclado_documentacion() 
         )
     
     elif data == "docs_inicio":
@@ -681,7 +680,6 @@ def setup_telegram_app():
     telegram_app.add_handler(CommandHandler("finalizacion", finalizacion))
     telegram_app.add_handler(CommandHandler("faq", faq))
     telegram_app.add_handler(CommandHandler("contacto", contacto))
-    telegram_app.add_handler(CommandHandler("f001", f001))
     
     telegram_app.add_handler(CallbackQueryHandler(manejar_botones))
     telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
