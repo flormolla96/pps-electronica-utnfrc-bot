@@ -25,6 +25,7 @@ DOCS_DIR.mkdir(exist_ok=True)
 F001_PDF = DOCS_DIR / "Formulario_001.pdf"
 F001_EJEMPLO_PDF = DOCS_DIR / "Ejemplo_Formulario_001.pdf"
 CONV_MARCO_PDF = DOCS_DIR / "CONVENIO_MARCO_PPS_2026.pdf"
+CONV_ESP_PDF = DOCS_DIR / "ConvenioEspecificoPPS_2026.pdf"
  
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
@@ -175,11 +176,11 @@ INFO = {
     "welcome": (
         "👋 ¡Hola! Soy el bot de <b>Prácticas Profesionales Supervisadas</b>\n"
         "de la carrera <b>Ingeniería Electrónica - UTN FRC</b>\n\n"
-        "⬇️ Seleccioná una opción:"
+        "👇 Seleccioná una opción:"
     ),
     "menu_principal": (
         "<b>Menú Principal</b>\n\n"
-        "⬇️ Selecciona una opción:"
+        "👇 Selecciona una opción:"
     ),
     "inicio_pps": (
         "🏭 <b>INICIO DE PPS</b>\n\n"
@@ -235,21 +236,6 @@ INFO = {
         "4. El/la estudiante debe enviar <b>copia de ART</b>\n\n"
         "🔸 <b>Si la empresa es monotributista:</b> enviar <b>constancia de AFIP</b>\n\n"
         "👇 <b>Selecciona una opción:</b>"
-    ),
-    "convenio_marco": (
-        "📑 <b>Convenio Marco de PPS</b>\n\n"
-        "• Lo completa la <b>empresa</b>.\n"
-        "• Se presenta <b>una sola vez</b> (para futuras PPS no se vuelve a completar, salvo que la cátedra indique lo contrario).\n\n"
-        "Si querés, decime si tu empresa ya tiene convenio marco cargado y te digo qué sigue."
-    ),
-    "convenio_especifico": (
-        "📘 <b>Convenio Específico de PPS</b>\n\n"
-        "⚠️ <b>Solo lo completan estudiantes que NO sean parte de la empresa ni pasantes.</b>\n\n"
-        "Si me decís tu situación:\n"
-        "1) empleado/a\n"
-        "2) pasante\n"
-        "3) externo/a\n"
-        "te confirmo si lo necesitás."
     ),
     "monotributo": (
         "🧾 <b>Empresa monotributista</b>\n\n"
@@ -525,12 +511,11 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if F001_PDF.exists():
         await user_message.reply_document(
             document=open(F001_PDF, "rb"), 
-            filename=F001_PDF.name,
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregar teclado después de enviar archivo
+            filename=F001_PDF.name
         )
     else:
         await user_message.reply_text(
-            "⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs.",
+            "⚠️ No encuentro el PDF del Formulario 001",
             parse_mode="HTML",
             reply_markup=teclado_documentacion()
         )
@@ -563,26 +548,41 @@ async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if CONV_MARCO_PDF.exists():
         await user_message.reply_document(
             document=open(CONV_MARCO_PDF, "rb"), 
-            filename=CONV_MARCO_PDF.name,
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregar teclado después de enviar archivo
+            filename=CONV_MARCO_PDF.name
         )
     else:
         await user_message.reply_text(
-            "⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs.",
+            "⚠️ No encuentro el PDF del Convenio Marco",
             parse_mode="HTML",
             reply_markup=teclado_documentacion()
         )
 
 async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(
-            INFO["convenio_especifico"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
+    texto = (
+        "📘 <b>Convenio Específico de PPS</b>\n\n"
+        "⚠️ <b>Solo lo completan estudiantes que NO sean parte de la empresa.</b>\n\n"
+    )
+    if isinstance(update, Update) and update.message:
+        user_message = update.message
+        await user_message.reply_text(texto, parse_mode="HTML")
+    elif isinstance(update, Update) and update.callback_query:
+        user_message = update.callback_query.message
+        await user_message.reply_text(texto, parse_mode="HTML")
+    else:
+        user_message = update.message if hasattr(update, 'message') else None
+        if user_message:
+            await user_message.reply_text(texto, parse_mode="HTML")
+        else:
+            return
+    
+    if CONV_ESP_PDF.exists():
+        await user_message.reply_document(
+            document=open(CONV_ESP_PDF, "rb"), 
+            filename=CONV_ESP_PDF.name
         )
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(
-            INFO["convenio_especifico"],
+    else:
+        await user_message.reply_text(
+            "⚠️ No encuentro el PDF del Convenio Marco",
             parse_mode="HTML",
             reply_markup=teclado_documentacion()
         )
