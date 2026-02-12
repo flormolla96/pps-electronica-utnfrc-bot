@@ -546,7 +546,6 @@ async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
        "📑 <b>Convenio Marco de PPS</b>\n\n"
         "• Lo completa la <b>empresa</b>.\n"
         "• Se presenta <b>una sola vez</b> (para futuras PPS no se vuelve a completar, salvo que la cátedra indique lo contrario).\n\n"
-        "Si querés, decime si tu empresa ya tiene convenio marco cargado y te digo qué sigue."
     )
     if isinstance(update, Update) and update.message:
         user_message = update.message
