@@ -403,11 +403,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await f001(query, context)
     
     elif data == "convenio_marco":
-        await query.edit_message_text(
-            INFO["convenio_marco"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()  # Volver al menú de documentación
-        )
+        await convenio_marco(query, context)
     
     elif data == "convenio_especifico":
         await query.edit_message_text(
@@ -547,9 +543,10 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = (
-        "🧾 <b>Formulario Convenio Marco</b>\n\n"
-        "📌 Debe completarse <b>en formato digital</b>.\n\n"
-        "📌 Se completa UNA sola vez por la empresa, si ya firmo un convenio con la UTN con anterioridad no debe firmarlo nuevamente"
+       "📑 <b>Convenio Marco de PPS</b>\n\n"
+        "• Lo completa la <b>empresa</b>.\n"
+        "• Se presenta <b>una sola vez</b> (para futuras PPS no se vuelve a completar, salvo que la cátedra indique lo contrario).\n\n"
+        "Si querés, decime si tu empresa ya tiene convenio marco cargado y te digo qué sigue."
     )
     if isinstance(update, Update) and update.message:
         user_message = update.message
