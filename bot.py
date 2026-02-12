@@ -365,14 +365,14 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             INFO["requisitos"],
             parse_mode="HTML",
-            reply_markup=teclado_documentacion() 
+            reply_markup=teclado_volver_a_inicio_pps()
         )
     
     elif data == "docs_inicio":
         await query.edit_message_text(
             INFO["docs_inicio"],
             parse_mode="HTML",
-            reply_markup=teclado_volver_a_inicio_pps()  # FALTABA agregar el teclado aquí
+            reply_markup=teclado_documentacion()
         )
     
     # OTRAS OPCIONES DEL MENÚ PRINCIPAL
