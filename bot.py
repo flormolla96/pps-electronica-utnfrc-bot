@@ -24,6 +24,7 @@ DOCS_DIR = Path(__file__).parent / "docs"
 DOCS_DIR.mkdir(exist_ok=True)
 F001_PDF = DOCS_DIR / "Formulario_001.pdf"
 F001_EJEMPLO_PDF = DOCS_DIR / "Ejemplo_Formulario_001.pdf"
+CONV_MARCO_PDF = DOCS_DIR / "CONVENIO_MARCO_PPS_2026.pdf"
  
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
@@ -443,12 +444,6 @@ async def requisitos(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML",
             reply_markup=teclado_volver_a_inicio_pps()
         )
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(
-            INFO["requisitos"],
-            parse_mode="HTML",
-            reply_markup=teclado_volver_a_inicio_pps()
-        )
 
 async def docs_inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
@@ -518,7 +513,6 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Luego escribime <b>'preguntas f001'</b> para ver dudas típicas."
     )
     
-    # Determinar si es mensaje o callback query
     if isinstance(update, Update) and update.message:
         user_message = update.message
         await user_message.reply_text(texto, parse_mode="HTML")
@@ -536,7 +530,7 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await user_message.reply_document(
             document=open(F001_PDF, "rb"), 
             filename=F001_PDF.name,
-            reply_markup=teclado_documentacion()  # Agregar teclado después de enviar archivo
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregar teclado después de enviar archivo
         )
     else:
         await user_message.reply_text(
@@ -552,15 +546,33 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(
-            INFO["convenio_marco"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
+    texto = (
+        "🧾 <b>Formulario Convenio Marco</b>\n\n"
+        "📌 Debe completarse <b>en formato digital</b>.\n\n"
+        "📌 Se completa UNA sola vez por la empresa, si ya firmo un convenio con la UTN con anterioridad no debe firmarlo nuevamente"
+    )
+    if isinstance(update, Update) and update.message:
+        user_message = update.message
+        await user_message.reply_text(texto, parse_mode="HTML")
+    elif isinstance(update, Update) and update.callback_query:
+        user_message = update.callback_query.message
+        await user_message.reply_text(texto, parse_mode="HTML")
+    else:
+        user_message = update.message if hasattr(update, 'message') else None
+        if user_message:
+            await user_message.reply_text(texto, parse_mode="HTML")
+        else:
+            return
+    
+    if CONV_MARCO_PDF.exists():
+        await user_message.reply_document(
+            document=open(CONV_MARCO_PDF, "rb"), 
+            filename=CONV_MARCO_PDF.name,
+            reply_markup=teclado_volver_a_inicio_pps()  # Agregar teclado después de enviar archivo
         )
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(
-            INFO["convenio_marco"],
+    else:
+        await user_message.reply_text(
+            "⚠️ No encuentro el PDF del Formulario 001 en la carpeta /docs.",
             parse_mode="HTML",
             reply_markup=teclado_documentacion()
         )
