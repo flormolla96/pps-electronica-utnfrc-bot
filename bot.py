@@ -241,33 +241,6 @@ INFO = {
         "🧾 <b>Empresa monotributista</b>\n\n"
         "Si la empresa es monotributista, se debe enviar <b>constancia de AFIP</b> junto con la documentación de inicio."
     ),
-    "art": (
-        "🛡️ <b>ART</b>\n\n"
-        "El/la estudiante debe enviar <b>copia de ART</b> como parte de la documentación de inicio.\n"
-        "Si no sabés cuál es la ART o cómo pedir la constancia, decime cómo es tu vínculo con la empresa y te guío."
-    ),
-}
-
-# =================== KEYWORDS ===================
-KEYWORDS = {
-    "inicio": "inicio",
-    "comenzar": "inicio",
-    "empezar": "inicio",
-    "final": "finalizacion",
-    "finalizacion": "finalizacion",
-    "terminar": "finalizacion",
-    "requisitos": "requisitos",
-    "docs": "docs_inicio",
-    "documentos": "docs_inicio",
-    "documentación": "docs_inicio",
-    "convenio marco": "convenio_marco",
-    "convenio específico": "convenio_especifico",
-    "convenio especifico": "convenio_especifico",
-    "art": "art",
-    "afip": "monotributo",
-    "monotributo": "monotributo",
-    "informe": "informe",
-    "certificado": "certificado",
 }
 
 # =================== TECLADOS DEL BOT ===================
@@ -300,7 +273,6 @@ def teclado_documentacion():
         [InlineKeyboardButton("🧾 Formulario 001", callback_data="f001")],
         [InlineKeyboardButton("🧾 Convenio Marco", callback_data="convenio_marco")],
         [InlineKeyboardButton("🧾 Convenio Específico", callback_data="convenio_especifico")],
-        [InlineKeyboardButton("🛡️ ART", callback_data="art")],
         [InlineKeyboardButton("⬅️ Volver a Inicio PPS", callback_data="menu_inicio_pps")]
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -392,18 +364,7 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await convenio_marco(query, context)
     
     elif data == "convenio_especifico":
-        await query.edit_message_text(
-            INFO["convenio_especifico"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()  # Volver al menú de documentación
-        )
-    
-    elif data == "art":
-        await query.edit_message_text(
-            INFO["art"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()  # Volver al menú de documentación
-        )
+        await convenio_especifico(query, context)
 
 async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
@@ -531,6 +492,7 @@ async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
        "📑 <b>Convenio Marco de PPS</b>\n\n"
         "• Lo completa la <b>empresa</b>.\n"
         "• Se presenta <b>una sola vez</b> (para futuras PPS no se vuelve a completar, salvo que la cátedra indique lo contrario).\n\n"
+        "🛡️ <b>ART</b>: El/la estudiante debe enviar <b>de forma obligatoria</b> una <b>copia de ART</b> como parte de la documentación de inicio.\n"
     )
     if isinstance(update, Update) and update.message:
         user_message = update.message
@@ -561,6 +523,7 @@ async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE
     texto = (
         "📘 <b>Convenio Específico de PPS</b>\n\n"
         "⚠️ <b>Solo lo completan estudiantes que NO sean parte de la empresa.</b>\n\n"
+        "🛡️ <b>ART</b>: El/la estudiante debe enviar <b>de forma obligatoria</b> una <b>copia de ART</b> como parte de la documentación de inicio.\n"
     )
     if isinstance(update, Update) and update.message:
         user_message = update.message
@@ -587,20 +550,6 @@ async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE
             reply_markup=teclado_documentacion()
         )
 
-async def art(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        await update.message.reply_text(
-            INFO["art"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
-        )
-    elif update.callback_query:
-        await update.callback_query.edit_message_text(
-            INFO["art"],
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
-        )
-
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
 
@@ -610,62 +559,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             intent = v
             break
 
-    if intent == "inicio":
-        return await inicio(update, context)
-    elif intent == "finalizacion":
-        return await finalizacion(update, context)
-    elif intent == "informe":
-        return await update.message.reply_text(
-            "📝 <b>Informe final</b>\n\n"
-            "Decime qué te piden en tu cátedra (índice / formato / extensión) y te armo una plantilla.\n"
-            "Si ya tenés el enunciado, pegalo acá.",
-            parse_mode="HTML",
-        )
-    elif intent == "certificado":
-        return await update.message.reply_text(
-            "📄 <b>Certificado / Constancia</b>\n\n"
-            "En general lo emite la empresa e incluye: nombre, DNI, período, horas y tareas.\n"
-            "Si querés, te genero un modelo para que lo firmen.",
-            parse_mode="HTML",
-        )
-    elif intent == "docs_inicio":
-        return await docs_inicio(update, context)
-    elif intent == "requisitos":
-        return await requisitos(update, context)
-    elif intent == "convenio_marco":
-        return await update.message.reply_text(
-            INFO["convenio_marco"], 
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
-        )
-    elif intent == "convenio_especifico":
-        return await update.message.reply_text(
-            INFO["convenio_especifico"], 
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
-        )
-    elif intent == "art":
-        return await update.message.reply_text(
-            INFO["art"], 
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
-        )
-    elif intent == "monotributo":
-        return await update.message.reply_text(
-            INFO["monotributo"], 
-            parse_mode="HTML",
-            reply_markup=teclado_documentacion()
-        )
-    elif intent == "f001" or "formulario 001" in text or "form001" in text:
-        return await f001(update, context)
     else:
         await update.message.reply_text(
             "No estoy seguro qué necesitás 🙃\n"
-            "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n"
-            "- 'inicio' para comenzar PPS\n"
-            "- 'documentos' para ver documentación\n"
-            "- 'requisitos' para ver requisitos académicos\n"
-            "- 'final' para finalización",
+            "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n",
             parse_mode="HTML"
         )
 
@@ -683,8 +580,7 @@ def setup_telegram_app():
     telegram_app.add_handler(CommandHandler("docs_inicio", docs_inicio))
     telegram_app.add_handler(CommandHandler("f001", f001))
     telegram_app.add_handler(CommandHandler("convenio_marco", convenio_marco))
-    telegram_app.add_handler(CommandHandler("convenio_especifico", convenio_especifico))
-    telegram_app.add_handler(CommandHandler("art", art))  
+    telegram_app.add_handler(CommandHandler("convenio_especifico", convenio_especifico)) 
     telegram_app.add_handler(CommandHandler("finalizacion", finalizacion))
     telegram_app.add_handler(CommandHandler("faq", faq))
     telegram_app.add_handler(CommandHandler("contacto", contacto))
