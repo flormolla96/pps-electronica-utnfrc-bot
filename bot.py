@@ -554,17 +554,12 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
 
     intent = None
-    for k, v in KEYWORDS.items():
-        if k in text:
-            intent = v
-            break
 
-    else:
-        await update.message.reply_text(
-            "No estoy seguro qué necesitás 🙃\n"
-            "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n",
-            parse_mode="HTML"
-        )
+    await update.message.reply_text(
+        "No estoy seguro qué necesitás 🙃\n"
+        "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n",
+        parse_mode="HTML"
+    )
 
 
 # =================== CONFIGURACIÓN DEL BOT ===================
