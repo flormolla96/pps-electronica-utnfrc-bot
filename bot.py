@@ -132,7 +132,7 @@ def home():
             <h1 class="bot-name">Bot PPS - Ingeniería Electrónica UTN FRC</h1>
             <p class="status">✅ Servicio activo y funcionando</p>
             <p>Bot de Telegram para Práctica Profesional Supervisada</p>
-            <p>Usa /start en Telegram para comenzar</p>
+            <p>Usa /inicio en Telegram para comenzar</p>
             <div class="links">
                 <a href="/health">🔍 Verificar estado</a>
                 <a href="https://t.me/PPS_Electronica_UTN_Bot">💬 Ir al bot</a>
@@ -284,7 +284,7 @@ def teclado_volver_a_docs_inicio_pps():
     return InlineKeyboardMarkup(keyboard)
 
 # =================== HANDLERS DEL BOT ===================
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = INFO["welcome"]
     await update.message.reply_text(
         welcome_text,
@@ -493,6 +493,15 @@ async def f001(update: Update, context: ContextTypes.DEFAULT_TYPE):
             filename=F001_EJEMPLO_PDF.name
         )
 
+    if F001_EJEMPLO_PDF.exists():
+        # Mensaje opcional con teclado después de enviar los archivos
+        await user_message.reply_text(
+            "✅ Documentos enviados. ¿Qué más necesitas?",
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_docs_inicio_pps()
+        )
+    
+
 async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
     texto = (
        "📑 <b>Convenio Marco de PPS</b>\n\n"
@@ -516,8 +525,7 @@ async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if CONV_MARCO_PDF.exists():
         await user_message.reply_document(
             document=open(CONV_MARCO_PDF, "rb"), 
-            filename=CONV_MARCO_PDF.name,
-            reply_markup=teclado_volver_a_docs_inicio_pps()
+            filename=CONV_MARCO_PDF.name
         )
     else:
         await user_message.reply_text(
@@ -564,6 +572,14 @@ async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE
             parse_mode="HTML",
             reply_markup=teclado_documentacion()
         )
+    
+    if CONV_ESP_PDF.exists():
+        # Mensaje opcional con teclado después de enviar los archivos
+        await user_message.reply_text(
+            "✅ Documento enviado. ¿Qué más necesitas?",
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_docs_inicio_pps()
+        )
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (update.message.text or "").strip().lower()
@@ -572,7 +588,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "No estoy seguro qué necesitás 🙃\n"
-        "Usá /start para ver el menú principal o escribí alguna de estas palabras:\n",
+        "Usá /inicio para ver el menú principal\n",
         parse_mode="HTML"
     )
 
@@ -583,7 +599,7 @@ def setup_telegram_app():
     
     telegram_app = Application.builder().token(TOKEN).build()
     
-    telegram_app.add_handler(CommandHandler("start", start))
+    telegram_app.add_handler(CommandHandler("inicio", inicio))
     telegram_app.add_handler(CommandHandler("menu", menu))
     telegram_app.add_handler(CommandHandler("inicio", inicio))
     telegram_app.add_handler(CommandHandler("requisitos", requisitos))  
