@@ -277,6 +277,12 @@ def teclado_documentacion():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+def teclado_volver_a_docs_inicio_pps():
+    keyboard = [
+        [InlineKeyboardButton("⬅️ Volver a Documentación Inicial", callback_data="docs_inicio")],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
 # =================== HANDLERS DEL BOT ===================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = INFO["welcome"]
@@ -338,8 +344,8 @@ async def manejar_botones(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "menu_finalizacion":
         await query.edit_message_text(
             INFO["finalizacion"],
-            parse_mode="HTML",  # CAMBIÉ de MarkdownV2 a HTML
-            reply_markup=teclado_volver_a_inicio_pps()  # Agregué teclado
+            parse_mode="HTML",  
+            reply_markup=teclado_volver_a_inicio_pps()  
         )
     
     elif data == "menu_faq":
@@ -370,13 +376,13 @@ async def inicio(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text(
             INFO["inicio_pps"],
-            parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
+            parse_mode="HTML",  
             reply_markup=teclado_inicio_pps()
         )
     elif update.callback_query:
         await update.callback_query.edit_message_text(
             INFO["inicio_pps"],
-            parse_mode="HTML",  # CORRECCIÓN: cambié MarkdownV2 por HTML
+            parse_mode="HTML", 
             reply_markup=teclado_inicio_pps()
         )
 
@@ -510,13 +516,22 @@ async def convenio_marco(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if CONV_MARCO_PDF.exists():
         await user_message.reply_document(
             document=open(CONV_MARCO_PDF, "rb"), 
-            filename=CONV_MARCO_PDF.name
+            filename=CONV_MARCO_PDF.name,
+            reply_markup=teclado_volver_a_docs_inicio_pps()
         )
     else:
         await user_message.reply_text(
             "⚠️ No encuentro el PDF del Convenio Marco",
             parse_mode="HTML",
-            reply_markup=teclado_documentacion()
+            reply_markup=teclado_volver_a_docs_inicio_pps()
+        )
+
+    if CONV_MARCO_PDF.exists():
+        # Mensaje opcional con teclado después de enviar los archivos
+        await user_message.reply_text(
+            "✅ Documento enviado. ¿Qué más necesitas?",
+            parse_mode="HTML",
+            reply_markup=teclado_volver_a_docs_inicio_pps()
         )
 
 async def convenio_especifico(update: Update, context: ContextTypes.DEFAULT_TYPE):
